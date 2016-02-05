@@ -28,7 +28,7 @@ app.get('*', function (req, res) {
 });
 
 // TODO: use node-config, and read port from config file!
-var port = 3000;
+var port = 5000;
 app.listen(port, '0.0.0.0', function (err) {
   if (err) {
     console.error(err);

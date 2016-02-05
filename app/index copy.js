@@ -14,8 +14,6 @@ import configureStore from './configureStore'
 import App from './app';
 import Agents from './agents';
 import AgentSearchResults from './agentsSearchResults';
-import AgentPage from './agentPage';
-import ResourcePage from './resourcePage';
 
 
 import './styles/nypl_styleguide.css';
@@ -51,10 +49,7 @@ render((
 		<Router test="whhhhat" history={history}>
 			<Route path="/" component={App}/>    
 			<Route path="/agents" component={Agents}/>
-			<Route path="/agents/:id" component={AgentPage}/>
 			<Route path="/agents/search/:term" component={AgentSearchResults}/>
-			<Route path="/resources/:id" component={ResourcePage}/>
-
 
 
 		</Router>
