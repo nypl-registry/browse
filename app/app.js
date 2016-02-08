@@ -42,6 +42,8 @@ const App = React.createClass({
                		This site is the public side of an ongoing data project at <a href="http://labs.nypl.org">NYPL Labs</a>. Feel free to explore but please keep in mind this site may break or go offline at anytime. While we are working towards persistent URIs for our resources we are not quite there yet, so please do not reuse any of the identifiers found on this site.
                		<br/><br/>
                		<div><Link to="/agents">Explore Agents</Link></div>
+               		<div>Explore Terms (coming soon)</div>
+               		<div>Explore Resources (coming soon)</div>
                		</div>
               </div>
             </div>
