@@ -3,10 +3,12 @@ var express = require('express');
 var webpack = require('webpack');
 
 var __DEV__ = process.env.NODE_ENV === 'development';
+var port = 80;
 
 var app = express();
 
 if (__DEV__) {
+  var port = 5000;
   var webpackConfig = require('./webpack.config.dev');
   var compiler = webpack(webpackConfig);
   app.use(require('webpack-dev-middleware')(compiler, {
@@ -28,7 +30,7 @@ app.get('*', function (req, res) {
 });
 
 // TODO: use node-config, and read port from config file!
-var port = 5000;
+
 app.listen(port, '0.0.0.0', function (err) {
   if (err) {
     console.error(err);

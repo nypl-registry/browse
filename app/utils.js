@@ -2,8 +2,9 @@ var axios = require('axios')
 
 
 
-var API_URL = "http://45.55.45.240/api/"
+//var API_URL = "http://45.55.45.240/api/"
 //var API_URL = "http://localhost:3000/api/"
+var API_URL = window.browseAPI
 
 var colors = [ "aqua",  "aquamarine",     "bisque",  "black",  "blue",  "blueviolet",  "brown",  "burlywood",  "cadetblue",  "chartreuse",  "chocolate",  "coral",  "cornflowerblue",  "cornsilk",  "crimson",  "cyan",  "darkblue",  "darkcyan",  "darkgoldenrod",  "darkgray",  "darkgreen",  "darkgrey",  "darkkhaki",  "darkmagenta",  "darkolivegreen",  "darkorange",  "darkorchid",  "darkred",  "darksalmon",  "darkseagreen",  "darkslateblue",  "darkslategray",  "darkslategrey",  "darkturquoise",  "darkviolet",  "deeppink",  "deepskyblue",  "dimgray",  "dimgrey",  "dodgerblue",  "firebrick",   "forestgreen",  "fuchsia",  "gainsboro",    "gold",  "goldenrod",  "gray",  "green",  "greenyellow",  "grey",  "honeydew",  "hotpink",  "indianred",  "indigo",  "khaki",  "lavender",   "lawngreen",  "lemonchiffon",  "lightblue",  "lightcoral",  "lightgoldenrodyellow",  "lightgray",  "lightgreen",  "lightgrey",  "lightpink",  "lightsalmon",  "lightseagreen",  "lightskyblue",  "lightslategray",  "lightslategrey",  "lightsteelblue",  "lime",  "limegreen",    "magenta",  "maroon",  "mediumaquamarine",  "mediumblue",  "mediumorchid",  "mediumpurple",  "mediumseagreen",  "mediumslateblue",  "mediumspringgreen",  "mediumturquoise",  "mediumvioletred",  "midnightblue",  "moccasin",   "navy",  "olive",  "olivedrab",  "orange",  "orangered",  "orchid",  "palegreen",  "paleturquoise",  "palevioletred",  "peru",  "pink",  "plum",  "powderblue",  "purple",  "rebeccapurple",  "red",  "rosybrown",  "royalblue",  "saddlebrown",  "salmon",  "sandybrown",  "seagreen",  "sienna",  "silver",  "skyblue",  "slateblue",  "slategray",  "slategrey",  "springgreen",  "steelblue",  "tan",  "teal",  "thistle",  "tomato",  "turquoise",  "violet",    "yellow",  "yellowgreen"]
 
