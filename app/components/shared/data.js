@@ -31,7 +31,7 @@ const Data = React.createClass({
     hist.reverse()
     return (
       <div className="">      
-        <img src="/imgs/data.png" style={{cursor:"pointer"}} alt="Click to show API DATA" onClick={this.toggleApiList}></img>
+        <div className="dataicon" alt="Click to show API DATA" onClick={this.toggleApiList}></div>
         <div ref="databox" className="databox">
           
           {hist.map(x => {
