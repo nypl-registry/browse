@@ -33,7 +33,7 @@ const Data = React.createClass({
       <div className="">      
         <div className="dataicon" alt="Click to show API DATA" onClick={this.toggleApiList}></div>
         <div ref="databox" className="databox">
-          
+          API requests made:<br/>
           {hist.map(x => {
 
             return (<code><a href={x.url}>{x.desc}</a></code>)
