@@ -14,6 +14,8 @@ const Footer = React.createClass({
         <div className="container">
           <div className="row header">
             <div className="twelve columns footer">
+
+
             
                 <Data></Data>
             </div>
