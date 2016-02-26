@@ -1,15 +1,17 @@
 import React from 'react';
 import { Router, Route, Link } from 'react-router'
 import { connect } from 'react-redux'
-import { debounce, searchAgentByName, randomColor } from './utils.js';
+import { debounce, searchAgentByName, randomColor } from '../../utils.js';
 
-import HeaderNav from './header_nav.js';
+import HeaderNav from '../shared/header_nav.js';
 
 var rowColor = "white"
 
 const AgentsSearchResultsItem = React.createClass({
 
   render() {
+
+
 
     var image = {position:"relative"}
     var styleLionColor = { color: randomColor() }
@@ -23,27 +25,27 @@ const AgentsSearchResultsItem = React.createClass({
 
     var resourcesNoun = (this.props.data.useCount===1) ? "resource" : "resources"
     var desc = <span>{this.props.data.useCount} {resourcesNoun}</span>
-    if (this.props.data.topFiveRoles.length>0) desc = <span>{this.props.data.topFiveRoles.join(", ")} ({this.props.data.useCount} resources)</span>
-    if (this.props.data.description && this.props.data.topFiveRoles.length>0) desc = <span>{this.props.data.description}<br/>{this.props.data.topFiveRoles.join(", ")} ({this.props.data.useCount} resources)</span>
+    if (this.props.data.topFiveRolesString.length>0) desc = <span>{this.props.data.topFiveRolesString.join(", ")} ({this.props.data.useCount} resources)</span>
+    if (this.props.data.description && this.props.data.topFiveRolesString.length>0) desc = <span>{this.props.data.description}<br/>{this.props.data.topFiveRolesString.join(", ")} ({this.props.data.useCount} resources)</span>
     
-    var topFiveTerms = []
-    this.props.data.topFiveTerms.forEach(t=> { topFiveTerms.push(<span key={`top-five-id-${topFiveTerms.length}`}>{t}<br/></span>) })
+    var topFiveTermsString = []
+    this.props.data.topFiveTermsString.forEach(t=> { topFiveTermsString.push(<span key={`top-five-id-${topFiveTermsString.length}`}>{t}<br/></span>) })
 
 
     return (
-      <Link className="agent-listing-item-link" to={`/agents/${this.props.data.uri}`}>
+      <Link className="agent-listing-item-link" to={`/agents/${this.props.data['@id'].split(":")[1]}`}>
         <div className="row agent-listing-item" style={rowColorStyle}>        
           <div className="three columns agent-listing-image" style={image}  >          
               <span style={styleLionColor} className="lg-icon nypl-icon-logo-mark agent-listing-image-placeholder"></span>
           </div>
           <div className="five columns">
-            <div className="agent-listing-title">{this.props.data.label}</div>
+            <div className="agent-listing-title">{this.props.data.prefLabel}</div>
             <div className="agent-listing-desc">{desc}</div>
           </div>
           <div className="four columns agent-listing-terms-aligner">
 
             <div className="agent-listing-terms">
-              {topFiveTerms}
+              {topFiveTermsString}
             </div>
 
           </div>
@@ -58,7 +60,6 @@ const AgentsSearchResultsItem = React.createClass({
 
 const AgentsSearchResults = React.createClass({
 
-
   getInitialState: function(){
       return {
           results: []
@@ -66,15 +67,21 @@ const AgentsSearchResults = React.createClass({
   },
 
   componentDidMount: function(){
-    var self = this;
-    searchAgentByName(this.props.params.term,function(results){
+    let q = "" || (this.props.location.query.q) ? this.props.location.query.q : ""
+    let self = this
+
+    searchAgentByName(q,function(results){
       var rAry = []
-      results.data.forEach(r =>{
-        rAry.push(<AgentsSearchResultsItem key={r.uri} data={r}/>)             
+      results.data.itemListElement.forEach(r =>{
+        rAry.push(<AgentsSearchResultsItem key={r.result['@id']} data={r.result}/>)             
       })
       self.setState({results:rAry})
     })
-  },
+    this._input.focus()
+    var val = this._input.value
+    this._input.value = ''
+    this._input.value = val
+  },  
 
 
   handleKeyUp: function(event){
@@ -82,16 +89,15 @@ const AgentsSearchResults = React.createClass({
     if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 65 && event.keyCode <= 90) || event.keyCode == 13 || event.keyCode == 8 || event.keyCode == 46  ){
 
       var self = this;
-      window.browseHistory.replace('/agents/search/'+event.target.value)
+      window.browseHistory.replace('/agents/search/?q='+event.target.value)
       //this.setSate({ results : this.state.results})
       
-      console.log(event.target.value)
       self.setState({results:[]})
       
       searchAgentByName(event.target.value,function(results){
         var rAry = []
-        results.data.forEach(r =>{
-          rAry.push(<AgentsSearchResultsItem key={r.uri} data={r}/>)             
+        results.data.itemListElement.forEach(r =>{
+          rAry.push(<AgentsSearchResultsItem key={r.result['@id']} data={r.result}/>)             
         })
         self.setState({results:rAry})
       })
@@ -107,13 +113,10 @@ const AgentsSearchResults = React.createClass({
   render() {
 
     var results = []
-    this.state.results.forEach(function(result) {
-
+    this.state.results.forEach(function(result) {      
       results.push(result)
-
     })
-
-
+    let q = "" || (this.props.location.query.q) ? this.props.location.query.q : ""
     return (
       <div style={{position: "relative"}}>
         <HeaderNav title="data.nypl / Agents / Search" link="/agents"/>
@@ -121,7 +124,7 @@ const AgentsSearchResults = React.createClass({
         <div className="container">
           <div className="row">
             <div className="tweleve columns">
-              <input type="text" className="agents-search-small" onKeyUp={this.handleKeyUp} onFocus={this.handleFocus} autoFocus="autofocus" defaultValue={this.props.params.term} placeholder="Search" autofocus="autofocus"/>              
+              <input ref={(c) => this._input = c} type="text" className="agents-search-small" onKeyUp={this.handleKeyUp} onFocus={this.handleFocus} autoFocus="autofocus" defaultValue={q} placeholder="Search" autofocus="autofocus"/>              
             </div>
           </div>
         </div>

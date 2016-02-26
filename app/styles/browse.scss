@@ -99,6 +99,40 @@
 }
 
 
+.footer{
+	margin-top: 100px;
+	border-top: 1px solid lightgray;
+	min-height: 50px;
+	padding-top: 10px;
+
+	img{
+		width:auto;
+		height: 40px;
+		float: right;
+	}
+
+	code{
+		display: block;
+	}
+
+	.databox{
+		overflow: hidden;
+		height: 0px;
+		transition: height .5s ease-in-out;
+
+		a{
+			color: $secondary-color;
+			text-decoration: none;
+		}
+	}
+
+
+
+}
+
+
+
+
 
 .agent-search-large{
 	margin-top: 100px;
@@ -337,7 +371,7 @@
 
 }
 
-.agent-resources-card{
+.agent-baseball-card{
 	font-family: 'Kievit-Regular';
 	color:$charcoal;
 	margin-top: 20px;
@@ -347,7 +381,14 @@
 	background-color: lightyellow;
 
 	div{
-		margin-bottom: 5px;
+		margin-bottom: 8px;
+	}
+	a{
+		text-decoration: none;
+		color: $secondary-color;
+	}
+	li{
+		margin-left: 5%;
 	}
 
 }
@@ -363,15 +404,31 @@
 }
 
 
+
+.resource-data-links{
+	font-family: 'Kievit-Regular';
+	padding: 10px;
+	border-radius: 3px;
+	font-size: 0.9em;
+	background-color: lightyellow;
+
+}
+
+
 .resource-item-fields{
 	font-family: 'Kievit-Regular';
 	color:$charcoal;
+
 	.resource-item-fields-label{
 		font-size: 1.25em;
-		margin-top: 10px;
+		margin-top: 15px;
 	}
 	.resource-item-fields-value{
-
 		margin-left: 10%;
+
+		a {
+			color: $secondary-color;
+			text-decoration: none;
+		}
 	}
 }

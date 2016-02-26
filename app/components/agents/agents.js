@@ -2,11 +2,11 @@ import React from 'react';
 import { Router, Route, Link } from 'react-router'
 import { connect } from 'react-redux'
 
-import { randomAgents } from './utils.js';
+import { randomAgents } from '../../utils.js';
 
 
-import HeaderNav from './header_nav.js';
-import Hero from './hero.js';
+import HeaderNav from '../shared/header_nav.js';
+import Hero from '../shared/hero.js';
 import AgentsSearchBox from './agentsSearch.js';
 
 const agentsHeroImages = [
@@ -23,8 +23,7 @@ const agentsHeroImages = [
 const RandomAgents = React.createClass({
 
   componentDidMount: function() {
-    randomAgents(function (result) {
-      console.log(result.data)
+    randomAgents(function (result) {      
       this.setState({
         randomAgents : result.data
       })
@@ -34,13 +33,13 @@ const RandomAgents = React.createClass({
   render() {
 
     if (this.state){
-      var r1 = (this.state.randomAgents) ? this.state.randomAgents[0] : {}
-      var r2 = (this.state.randomAgents) ? this.state.randomAgents[1] : {}
-      var r3 = (this.state.randomAgents) ? this.state.randomAgents[2] : {}        
+      var r1 = (this.state.randomAgents) ? this.state.randomAgents.itemListElement[0].result : {}
+      var r2 = (this.state.randomAgents) ? this.state.randomAgents.itemListElement[1].result : {}
+      var r3 = (this.state.randomAgents) ? this.state.randomAgents.itemListElement[2].result : {}        
     }else{
-      var r1 = {}
-      var r2 = {}
-      var r3 = {}
+      var r1 = { '@id': ""}
+      var r2 = { '@id': ""}
+      var r3 = { '@id': ""}
     }
 
 
@@ -61,10 +60,10 @@ const RandomAgent = React.createClass({
   render() {
     return (
         <div className="four columns">
-          <Link to={`/agents/${this.props.data.uri}`} className="agents-search-examples">
+          <Link to={`/agents/${this.props.data['@id'].split(":")[1]}`} className="agents-search-examples">
             <div className="agents-search-examples-image" style={{backgroundImage: `url(${this.props.data.depiction})`, backgroundSize: "cover" }} >
             </div>
-            <div className="agents-search-examples-label">{this.props.data.label}<br/></div>
+            <div className="agents-search-examples-label">{this.props.data.prefLabel}<br/></div>
             <div className="agents-search-examples-desc">{this.props.data.description}</div>
           </Link>
 

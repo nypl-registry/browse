@@ -1,11 +1,11 @@
 import React from 'react';
 import { Router, Route, Link } from 'react-router'
 
-import HeaderNav from './header_nav.js';
-import Hero from './hero.js';
+import HeaderNav from './components/shared/header_nav.js';
+import Hero from './components/shared/hero.js';
 
 
-const agentsHeroImages = [
+const heroImages = [
   { imageID: "407661", url:"http://digitalcollections.nypl.org/items/510d47da-93ab-a3d9-e040-e00a18064a99",title:"Manchester University robot."},
   { imageID: "2006656", 
   	url:"http://digitalcollections.nypl.org/items/9fa26d46-8f2c-b70d-e040-e00a1806315a",
@@ -33,7 +33,7 @@ const App = React.createClass({
       <div>
         <HeaderNav title="data.nypl" link=""/>
 
-        <Hero textMiddleClass="homepage-hero-middleText" image={ agentsHeroImages } textUpper="NYPL Labs" textMiddle="data.nypl" textLower=""/>
+        <Hero textMiddleClass="homepage-hero-middleText" image={ heroImages } textUpper="NYPL Labs" textMiddle="data.nypl" textLower=""/>
 
           <div className="container">
             <div className="row">

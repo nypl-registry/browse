@@ -12,10 +12,10 @@ import { Provider } from 'react-redux'
 import configureStore from './configureStore'
 
 import App from './app';
-import Agents from './agents';
-import AgentSearchResults from './agentsSearchResults';
-import AgentPage from './agentPage';
-import ResourcePage from './resourcePage';
+import Agents from './components/agents/agents';
+import AgentSearchResults from './components/agents/agentsSearchResults';
+import AgentPage from './components/agents/agentPage';
+import ResourcePage from './components/resources/resourcePage';
 
 
 import './styles/nypl_styleguide.css';
@@ -31,7 +31,7 @@ const history = useBasename(createHistory)({
 
 //oh...how do I do this...?
 window.browseHistory = history
-
+window.apiHistory = []
 
 
 
@@ -48,11 +48,12 @@ window.browseHistory = history
 
 render((
 	<Provider store={store}>
-		<Router test="whhhhat" history={history}>
+		<Router history={history}>
 			<Route path="/" component={App}/>    
 			<Route path="/agents" component={Agents}/>
+			<Route path="/agents/search" component={AgentSearchResults}/>
 			<Route path="/agents/:id" component={AgentPage}/>
-			<Route path="/agents/search/:term" component={AgentSearchResults}/>
+			<Route path="/resources" component={ResourcePage}/>
 			<Route path="/resources/:id" component={ResourcePage}/>
 
 
