@@ -137,6 +137,8 @@ export function agentResources(id,cb) {
 
 }
 
+
+
 export function agentImagesOf(id,cb) {
 
   apiHistoryPush(`Images of Agent: '${id}'`, `${API_URL}agents/?action=imagesof&value=${id}`)
@@ -156,7 +158,25 @@ export function agentImagesOf(id,cb) {
   })
 
 }
+export function resourceByOwi(id,cb) {
 
+  apiHistoryPush(`OWI Search: '${id}'`, `${API_URL}resources/?action=byowi&value=${id}`)
+
+
+  axios.get(API_URL+'resources', {
+    params: {
+      action: 'byowi',
+      value: id
+    }
+  })
+  .then(function (response) {
+    cb(response)
+  })
+  .catch(function (response) {
+    console.log(response)
+  })
+
+}
 
 export function resourceOverview(id,cb) {
 

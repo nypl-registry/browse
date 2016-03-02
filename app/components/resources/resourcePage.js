@@ -2,12 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom'
 import { Router, Route, Link } from 'react-router'
 import { connect } from 'react-redux'
-import { resourceOverview } from '../../utils.js';
+import { resourceOverview, resourceByOwi } from '../../utils.js';
 require('core-js/fn/object/entries')
 
 import HeaderNav from '../shared/header_nav.js';
 import Hero from '../shared/hero.js';
 import Footer from '../shared/footer.js';
+
+
+
+
+
 
 
 const ResourcePage = React.createClass({
@@ -32,7 +37,7 @@ const ResourcePage = React.createClass({
 	componentDidUpdate() {
 	  ReactDOM.findDOMNode(this).scrollIntoView()
 
-	},	
+	},
 
 	componentWillReceiveProps: function(nextProps) {
 
@@ -42,10 +47,10 @@ const ResourcePage = React.createClass({
 
 	},
 
-	render() {    
+	render() {
 		if (!this.state){
 			return (
-				<div>        
+				<div>
 					<HeaderNav title="data.nypl / Resources" link="/"/>
 					<Hero image={false} textUpper="" textMiddle="Loading..." textLower=""/>
 				</div>
@@ -72,10 +77,10 @@ const ResourcePage = React.createClass({
 			var counter = 0
 
 			return (
-				<div>        
+				<div>
 					<HeaderNav title="data.nypl / Resources" link="/"/>
 					<Hero textMiddleClass={textMiddleClass} textLowerClass={textLowerClass} image={{ url: imageUrl, title: "", link:""}} textUpper="" textMiddle={textMiddle} textLower={textLower}/>
-				
+
 
 					<div key={this.props.params.id} className="container">
 						<div key={this.props.params.id} className="row">
@@ -114,7 +119,7 @@ const ResourcePage = React.createClass({
 
 												if (d[0].search("roles:")==-1){
 
-													if (v.filename.length>0){												
+													if (v.filename.length>0){
 														v.filename.forEach(c =>{
 															d[2].push(<Link to={v['@id']}><img src={`http://images.nypl.org/index.php?t=t&id=${c}`}/></Link>)
 														})
@@ -128,7 +133,7 @@ const ResourcePage = React.createClass({
 
 												}else{
 
-													
+
 													d[0] = v.note
 													d[2].push(<Link to={v['@id']}>{v.prefLabel}</Link>)
 
@@ -144,8 +149,8 @@ const ResourcePage = React.createClass({
 													if (this.state.data.suppressed){
 														d[2].push(<span key={`link-${v}`}>{v} (SUPPRESSED)</span>)
 													}else{
-														d[2].push(<a key={`link-${v}`} href={`http://catalog.nypl.org/record=${v}`}>{v}</a>)  
-													}                          
+														d[2].push(<a key={`link-${v}`} href={`http://catalog.nypl.org/record=${v}`}>{v}</a>)
+													}
 												}else if (d[0]=='idMssColl'){
 													d[2].push(<a key={`link-${v}`} href={`http://archives.nypl.org/${v}`}>{v}</a>)
 												}else if (d[0]=='idMss'){
@@ -154,18 +159,19 @@ const ResourcePage = React.createClass({
 													d[2].push(<a key={`link-${v}`} href={`http://worldcat.org/oclc/${v}`}>{v}</a>)
 												}else if (d[0]=='idOwi'){
 													d[2].push(<a key={`link-${v}`} href={`http://classify.oclc.org/classify2/ClassifyDemo?owi=${v}`}>{v}</a>)
+													d[2].push(<OWILinks owi={v} />)
 												}else if (d[0]=='idLccCoarse'){
-													d[2].push(<a key={`link-${v}`} href={`http://billi.nypl.org/classmark/${v}`}>{v}</a>)  
+													d[2].push(<a key={`link-${v}`} href={`http://billi.nypl.org/classmark/${v}`}>{v}</a>)
 												}else if (d[0]=='idMmsDb'){
 
 													if (this.state.data['@type'].indexOf('nypl:Item') >-1 ){
-														d[2].push(<a key={`link-${v}`} href={`http://metadata.nypl.org/items/show/${v}`}>{v}</a>)  
+														d[2].push(<a key={`link-${v}`} href={`http://metadata.nypl.org/items/show/${v}`}>{v}</a>)
 													}
 													if (this.state.data['@type'].indexOf('nypl:Collection') >-1 ){
-														d[2].push(<a key={`link-${v}`} href={`http://metadata.nypl.org/collection/${v}`}>{v}</a>)  
+														d[2].push(<a key={`link-${v}`} href={`http://metadata.nypl.org/collection/${v}`}>{v}</a>)
 													}
-													
-												}else{            
+
+												}else{
 													d[2].push(<span key={`span-${v.toString()}`}>{v.toString()}<br/><br/></span>)
 												}
 											}
@@ -173,11 +179,11 @@ const ResourcePage = React.createClass({
 
 										})
 
-										
+
 										return (
 											<div key={`resource-field-${this.props.params.id}-${counter++}`} className="resource-item-fields">
 												<div key={`resource-field-label-${this.props.params.id}-${counter++}`} style={(d[1].length==0) ? { color: "lightgrey" } : {} } className="resource-item-fields-label">{d[0]}</div>
-												
+
 												{d[2].map(v => { return <div key={`resource-field-value-${this.props.params.id}-${counter++}`} className="resource-item-fields-value">{v}</div> })}
 
 
@@ -192,11 +198,11 @@ const ResourcePage = React.createClass({
 
 
 
-								
+
 							</div>
 							<div  className="two columns resource-data-links">
 									<a href={`/resources/${this.props.params.id}/jsonld`}>JSON-LD</a><br/><br/>
-									<a href={`/resources/${this.props.params.id}/nt`}>N-Triples</a>								
+									<a href={`/resources/${this.props.params.id}/nt`}>N-Triples</a>
 
 							</div>
 						</div>
@@ -207,11 +213,79 @@ const ResourcePage = React.createClass({
 				</div>
 
 
-			)      
+			)
 		}
 
 	}
 });
+
+
+const OWILinks = React.createClass({
+
+	componentDidMount: function(){
+		var self = this
+
+		console.log("DOING ODSUFADSF ASDF ADSF ",this.props.owi)
+		resourceByOwi(this.props.owi,function(results){
+		 self.setState({data:results.data})
+		 console.log(results)
+
+		})
+
+
+	},
+
+	shouldComponentUpdate: function(nextProps, nextState) {
+	  return true
+	},
+
+	componentWillReceiveProps: function(nextProps) {
+		resourceByOwi(nextProps.owi,function(results){
+		 this.setState({data:results.data})
+		}.bind(this))
+
+	},
+
+
+
+
+  render() {
+
+  	if (!this.state){
+
+	    return (
+	      <div>
+
+	      </div>
+	    )
+
+  	}else{
+
+
+	    return (
+	      <div className="resource-owi-box">
+	      	<span>Related Editions:</span><br/>
+	      	{this.state.data.itemListElement.map(owi => {
+	      		console.log(owi)
+
+	      		if (owi.result && owi.result.dateStart && owi.result.title){
+	      			return <span><Link to={owi.result['@id'].replace("res:","resources/")}>({owi.result.dateStart}) {owi.result.title}</Link><br/></span>
+
+	      		}else if (owi.result && owi.result.title){
+	      			return <span><Link to={owi.result['@id'].replace("res:","resources/")}>{owi.result.title}</Link><br/></span>
+	      		}else{
+	      			return <span/>
+	      		}
+
+	      	})}
+	      </div>
+	    )
+
+  	}
+
+  }
+});
+
 
 
 
