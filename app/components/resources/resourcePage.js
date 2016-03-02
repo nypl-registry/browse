@@ -226,11 +226,14 @@ const OWILinks = React.createClass({
 		var self = this
 
 		console.log("DOING ODSUFADSF ASDF ADSF ",this.props.owi)
-		resourceByOwi(this.props.owi,function(results){
-		 self.setState({data:results.data})
-		 console.log(results)
+		if (this.props.owi){
+			resourceByOwi(this.props.owi,function(results){
+			 console.log(results)
+			 self.setState({data:results.data})
 
-		})
+
+			})
+		}
 
 
 	},
@@ -240,9 +243,11 @@ const OWILinks = React.createClass({
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		resourceByOwi(nextProps.owi,function(results){
-		 this.setState({data:results.data})
-		}.bind(this))
+		if (this.props.owi){
+			resourceByOwi(nextProps.owi,function(results){
+			 this.setState({data:results.data})
+			}.bind(this))
+		}
 
 	},
 
@@ -251,23 +256,6 @@ const OWILinks = React.createClass({
 
   render() {
 
-  	var id = this.props.id
-  	var hasRelated = false
-  	var realtedEd = this.state.data.itemListElement.map(owi => {
-
-	      		if (parseInt(id)===parseInt( owi.result['@id'].replace("res:","") )) return <span/>
-
-	      		if (owi.result && owi.result.dateStart && owi.result.title){
-	      			hasRelated=true
-	      			return <span><Link to={owi.result['@id'].replace("res:","resources/")}>({owi.result.dateStart}) {owi.result.title}</Link><br/></span>
-
-	      		}else if (owi.result && owi.result.title){
-	      			hasRelated=true
-	      			return <span><Link to={owi.result['@id'].replace("res:","resources/")}>{owi.result.title}</Link><br/></span>
-	      		}else{
-	      			return <span/>
-	      		}
-	      	})
 
 
 
@@ -281,6 +269,28 @@ const OWILinks = React.createClass({
 	    )
 
   	}else{
+
+	  	var id = this.props.id
+	  	var hasRelated = false
+	  	console.log("HERE")
+	  	var realtedEd = this.state.data.itemListElement.map(owi => {
+
+				if (parseInt(id)===parseInt( owi.result['@id'].replace("res:","") )) return <span/>
+
+				if (owi.result && owi.result.dateStart && owi.result.title){
+					hasRelated=true
+					return <span><Link to={owi.result['@id'].replace("res:","resources/")}>({owi.result.dateStart}) {owi.result.title}</Link><br/></span>
+
+				}else if (owi.result && owi.result.title){
+					hasRelated=true
+					return <span><Link to={owi.result['@id'].replace("res:","resources/")}>{owi.result.title}</Link><br/></span>
+				}else{
+					return <span/>
+				}
+			})
+
+
+
 
   		if (hasRelated){
 		    return (
