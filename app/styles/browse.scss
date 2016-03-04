@@ -359,6 +359,22 @@
 
 
 	}
+
+	.agent-resources-list-item-bookcover{
+
+		img{
+			height: 40px;
+			width: auto;
+		}
+
+		transition: all .1s ease-in-out;
+
+		&:hover{
+			transform: scale(8)
+
+		}
+
+	}
 	.agent-resources-list-item-title-link{
 		text-decoration: none;
 		color:$charcoal;
@@ -389,6 +405,7 @@
 	border-radius: 3px;
 	font-size: 0.9em;
 	background-color: lightyellow;
+	overflow: hidden;
 
 	div{
 		margin-bottom: 8px;

@@ -9,15 +9,29 @@ import Hero from '../shared/hero.js';
 import Footer from '../shared/footer.js';
 
 const AgentPageResourcesItem = React.createClass({
-  render() {  
+
+  getInitialState: function(event) {
+    return {errored: false};
+  },
+
+  handleError: function(event) {
+    this.setState({errored: true});
+  },
+
+
+  render() {
+
+      var displayimg = (!this.state.errored) ? <td className="agent-resources-list-item-bookcover"><img onError={this.handleError} src={`http://s3.amazonaws.com/data.nypl.org/bookcovers/${this.props.data.idBnum}_ol.jpg`}/></td> : <td></td>
+      ///style={ {backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: "contain", backgroundImage: `url(http://s3.amazonaws.com/data.nypl.org/bookcovers/${this.props.data.idBnum}_ol.jpg)`}
         return (
           <tr className="agent-resources-list-item-row">
             <td >{this.props.data.startYear}</td>
+            {displayimg}
             <td className="agent-resources-list-item-title"><Link className="agent-resources-list-item-title-link" to={`/resources/${this.props.data.uri}`}><div>{this.props.data.title}</div></Link></td>
             <td><Link className="agent-resources-list-item-title-link" to={`/resources/${this.props.data.uri}`}><span className="lg-icon nypl-icon-wedge-right"></span></Link></td>
           </tr>
-        )     
-  }    
+        )
+  }
 })
 
 
@@ -25,7 +39,7 @@ const AgentPageResourcesItem = React.createClass({
 const AgentPageResources = React.createClass({
 
   componentDidMount: function(){
-    
+
     var self = this;
     agentResources(this.props.agentUri,function(results){
       self.setState({ data: results})
@@ -63,9 +77,9 @@ const AgentPageResources = React.createClass({
           contributedMenu.push({children: contributed[x], label: x, key: `contributed-menu-${x.substr(0,2)}-${contributed[x].length}`, count: `(${contributed[x].length})` })
         }
         if (aboutMenu.length===0) aboutMenu = [{label:"None", key: "about-menu-none",count:""}]
-        if (contributedMenu.length===0) contributedMenu = [{label:"None", key:"contributed-menu-none",count:""}]        
+        if (contributedMenu.length===0) contributedMenu = [{label:"None", key:"contributed-menu-none",count:""}]
         var resources = (!this.state.resources) ? [] : this.state.resources
-        if (resources.length>0){   
+        if (resources.length>0){
           resources.sort(function(a, b) {
               return parseInt(b.startYear) - parseInt(a.startYear);
           })
@@ -89,7 +103,7 @@ const AgentPageResources = React.createClass({
             <div className="row">
               <div className="three columns">
 
-                <div className="agent-resources-menu">                 
+                <div className="agent-resources-menu">
                   <div className="agent-resources-menu-top-level">Resources Created By</div>
 
                   {contributedMenu.map(t => {
@@ -150,8 +164,8 @@ const AgentPageResources = React.createClass({
 
 
 
-        )     
-      } 
+        )
+      }
     }
 });
 
@@ -175,10 +189,10 @@ const AgentPage = React.createClass({
 
   },
 
-  render() {    
+  render() {
     if (!this.state){
       return (
-        <div>        
+        <div>
           <HeaderNav title="data.nypl / Agents" link="/"/>
           <Hero image={false} textUpper="" textMiddle="Loading..." textLower=""/>
         </div>
@@ -201,15 +215,15 @@ const AgentPage = React.createClass({
       }
 
       return (
-        <div>        
+        <div>
           <HeaderNav title="data.nypl / Agents" link="/agents"/>
           <Hero textMiddleClass={textMiddleClass} textLowerClass={textLowerClass} image={{ url: imageUrl, title: "", link:""}} textUpper="" textMiddle={textMiddle} textLower={textLower}/>
-        
+
           <AgentPageResources key={this.props.params.id} agentData={this.state.data} agentUri={this.props.params.id} />
-        
+
           <Footer></Footer>
         </div>
-      )      
+      )
     }
 
   }
@@ -223,7 +237,7 @@ const AgentImagesOf = React.createClass({
      self.setState({imagesOf:results.data})
     })
   },
-  render() {    
+  render() {
     if (!this.state){
       return (
         <div>
@@ -233,16 +247,14 @@ const AgentImagesOf = React.createClass({
 
       var imagesOfAry =[]
 
-      console.log("||||||",this.state.imagesOf.itemListElement)
-
       if (this.state.imagesOf.itemListElement){
 
         if (this.state.imagesOf.itemListElement.length>0) imagesOfAry.push(<div key="agent-images-of-title" className="agent-images-of-title"><br/>Images of Agent:</div>)
 
         this.state.imagesOf.itemListElement.forEach(image=>{
           image.result.filename.forEach(i => {
-            imagesOfAry.push(<a key={i} href={`http://digitalcollections.nypl.org/items/${image.result.uuid.split("uuid:")[1]}`}><img src={`http://images.nypl.org/index.php?t=t&id=${i}`}/></a>)  
-          })          
+            imagesOfAry.push(<a key={i} href={`http://digitalcollections.nypl.org/items/${image.result.uuid.split("uuid:")[1]}`}><img src={`http://images.nypl.org/index.php?t=t&id=${i}`}/></a>)
+          })
         })
       }
       return (

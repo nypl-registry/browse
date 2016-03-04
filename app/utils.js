@@ -118,6 +118,7 @@ export function agentResources(id,cb) {
         results.contributed[r.prefLabel].push({
           title : r.result.title,
           startYear : r.result.startYear,
+          idBnum : r.result.idBnum,
           uri : r.result['@id'].split(":")[1],
         })
       }else{
@@ -125,6 +126,7 @@ export function agentResources(id,cb) {
         results.about[r.prefLabel].push({
           title : r.result.title,
           startYear : r.result.startYear,
+          idBnum : r.result.idBnum,
           uri : r.result['@id'].split(":")[1],
         })
       }
@@ -197,4 +199,53 @@ export function resourceOverview(id,cb) {
   })
 
 }
+
+
+function _arrayBufferToBase64( buffer ) {
+    var binary = '';
+    var bytes = new Uint8Array( buffer );
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode( bytes[ i ] );
+    }
+    return window.btoa( binary );
+}
+
+
+export function downloadCover(idBnum,cb) {
+
+  //apiHistoryPush(`Overview for resource: '${id}'`, `${API_URL}resources/?action=overview&value=${id}`)
+
+  console.log(`http://s3.amazonaws.com/data.nypl.org/bookcovers/${idBnum}.jpg`)
+
+  axios.get(`http://s3.amazonaws.com/data.nypl.org/bookcovers/${idBnum}.jpg`, {
+    responseType: 'arraybuffer'
+  })
+  .then(function (response) {
+
+    cb(null,_arrayBufferToBase64(response.data))
+  })
+  .catch(function (response) {
+
+    console.log(`http://s3.amazonaws.com/data.nypl.org/bookcovers/${idBnum}_ol.jpg`)
+    //try the OL version
+    axios.get(`http://s3.amazonaws.com/data.nypl.org/bookcovers/${idBnum}_ol.jpg`, {
+      responseType: 'arraybuffer'
+    })
+    .then(function (response) {
+      if (response.status===403){
+        cb(true,false)
+      }else{
+        cb(null,_arrayBufferToBase64(response.data))
+      }
+    })
+    .catch(function (response) {
+      cb(true,false)
+    })
+
+  })
+
+}
+
+
 

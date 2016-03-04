@@ -1,97 +1,92 @@
-import React from 'react';
+import React from 'react'
 import ReactDOM from 'react-dom'
 import { Router, Route, Link } from 'react-router'
 import { connect } from 'react-redux'
-import { resourceOverview, resourceByOwi } from '../../utils.js';
+import { resourceOverview, resourceByOwi } from '../../utils.js'
 require('core-js/fn/object/entries')
 
-import HeaderNav from '../shared/header_nav.js';
-import Hero from '../shared/hero.js';
-import Footer from '../shared/footer.js';
-
-
-
-
-
-
+import HeaderNav from '../shared/header_nav.js'
+import Hero from '../shared/hero.js'
+import Footer from '../shared/footer.js'
 
 const ResourcePage = React.createClass({
+  componentDidMount: function () {
+    var self = this
 
-	componentDidMount: function(){
-		var self = this
+    // console.log("DOING ODSUFADSF ASDF ADSF ",this.props.params.id)
+    resourceOverview(this.props.params.id, function (results) {
+      self.setState({data: results.data})
+      // console.log(results)
 
-		//console.log("DOING ODSUFADSF ASDF ADSF ",this.props.params.id)
-		resourceOverview(this.props.params.id,function(results){
-		 self.setState({data:results.data})
-		 //console.log(results)
+    })
+  },
 
-		})
+  shouldComponentUpdate: function (nextProps, nextState) {
+    return true
+  },
 
+  componentDidUpdate() {
+    ReactDOM.findDOMNode(this).scrollIntoView()
+  },
 
-	},
+  componentWillReceiveProps: function (nextProps) {
+    resourceOverview(nextProps.params.id, function (results) {
+      this.setState({data: results.data})
+    }.bind(this))
+  },
 
-	shouldComponentUpdate: function(nextProps, nextState) {
-	  return true
-	},
+  render() {
+    if (!this.state) {
+      return (
+      <div>
+        <HeaderNav title="data.nypl / Resources" link="/" />
+        <Hero
+          image={false}
+          textUpper=""
+          textMiddle="Loading..."
+          textLower="" />
+      </div>
+      )
+    } else {
+      console.log(this.state.data.idBnum[0],"$%^&#$")
 
-	componentDidUpdate() {
-	  ReactDOM.findDOMNode(this).scrollIntoView()
+      var textMiddle = '', textLower = ''
+      var imageUrl = {}
+      var textMiddleClass = 'agent-hero-middle-text'
+      var textLowerClass = 'agent-hero-lower-text'
+      if (this.state.data) {
+        // imageUrl = this.state.data.agent.depiction
+        textMiddle = this.state.data.title[0]
+        imageUrl = false
+        imageUrl = ( this.state.data && this.state.data.idBnum && this.state.data.idBnum[0]) ? { idBnum: this.state.data.idBnum[0] } : false
 
-	},
+        // textLower = <span>{this.state.data.agent.description}</span>
+        // if (this.state.data.agent.name) if (this.state.data.agent.topFiveRoles.length>0){
+        //   textLower = <span>{this.state.data.agent.description}<br/>{this.state.data.agent.topFiveRoles.join(", ")}</span>
+        // }
 
-	componentWillReceiveProps: function(nextProps) {
+      // console.log()
+      }
 
-		resourceOverview(nextProps.params.id,function(results){
-		 this.setState({data:results.data})
-		}.bind(this))
+      var counter = 0
 
-	},
-
-	render() {
-		if (!this.state){
-			return (
-				<div>
-					<HeaderNav title="data.nypl / Resources" link="/"/>
-					<Hero image={false} textUpper="" textMiddle="Loading..." textLower=""/>
-				</div>
-			)
-		}else{
-
-			var textMiddle = "", textLower = ""
-			var imageUrl = {}
-			var textMiddleClass = "agent-hero-middle-text"
-			var textLowerClass = "agent-hero-lower-text"
-			if (this.state.data){
-				// imageUrl = this.state.data.agent.depiction
-				textMiddle = this.state.data.title[0]
-				imageUrl = false;
-				// textLower = <span>{this.state.data.agent.description}</span>
-				// if (this.state.data.agent.name) if (this.state.data.agent.topFiveRoles.length>0){
-				//   textLower = <span>{this.state.data.agent.description}<br/>{this.state.data.agent.topFiveRoles.join(", ")}</span>
-				// }
-
-				//console.log()
-			}
-
-
-			var counter = 0
-
-			return (
-				<div>
-					<HeaderNav title="data.nypl / Resources" link="/"/>
-					<Hero textMiddleClass={textMiddleClass} textLowerClass={textLowerClass} image={{ url: imageUrl, title: "", link:""}} textUpper="" textMiddle={textMiddle} textLower={textLower}/>
-
-
-					<div key={this.props.params.id} className="container">
-						<div key={this.props.params.id} className="row">
-							<div key={this.props.params.id} className="ten columns">
-
-
-
-								<div>{Object.entries(this.state.data).map(d =>{
+      return (
+      <div>
+        <HeaderNav title="data.nypl / Resources" link="/" />
+        <Hero
+          textMiddleClass={textMiddleClass}
+          textLowerClass={textLowerClass}
+          image={{ url: imageUrl, title: '', link: ''}}
+          textUpper=""
+          textMiddle={textMiddle}
+          textLower={textLower} />
+        <div key={this.props.params.id} className="container">
+          <div key={this.props.params.id} className="row">
+            <div key={this.props.params.id} className="ten columns">
+              <div>
+                {Object.entries(this.state.data).map(d =>{
 
 										counter++
-
 
 										if (d[0]=='@context') return ""
 										if (!Array.isArray(d[1])) d[1] = [d[1]]
@@ -99,15 +94,12 @@ const ResourcePage = React.createClass({
 										d.push([])
 										d[1].map(v => {
 
-
 											if (v['@id']) if (v['@id'].search("terms:")>-1){
 												v = v['prefLabel']
 
 											}
 
-
 											if (typeof v === 'object'){
-
 
 												v['@id'] = v['@id'].replace(":","/")
 												v['@id'] = v['@id'].replace("resourcetypes/","http://id.loc.gov/vocabulary/resourceTypes/")
@@ -133,17 +125,12 @@ const ResourcePage = React.createClass({
 
 												}else{
 
-
 													d[0] = v.note
 													d[2].push(<Link to={v['@id']}>{v.prefLabel}</Link>)
 
-
 												}
 
-
-
 											}else{
-
 
 												if (d[0]=='idBnum'){
 													if (this.state.data.suppressed){
@@ -176,169 +163,118 @@ const ResourcePage = React.createClass({
 												}
 											}
 
-
 										})
-
 
 										return (
 											<div key={`resource-field-${this.props.params.id}-${counter++}`} className="resource-item-fields">
-												<div key={`resource-field-label-${this.props.params.id}-${counter++}`} style={(d[1].length==0) ? { color: "lightgrey" } : {} } className="resource-item-fields-label">{d[0]}</div>
+												<div key={`resource-field-label-${this.props.params.id}-${counter++}`} style={(d[1].length==0) ? { color: "lightgrey" } : {}} className="resource-item-fields-label">{d[0]}</div>
 
 												{d[2].map(v => { return <div key={`resource-field-value-${this.props.params.id}-${counter++}`} className="resource-item-fields-value">{v}</div> })}
-
 
 											</div>
 
 											)
 
 									})}
+              </div>
+            </div>
+            <div className="two columns resource-data-links">
+              <a href={`/resources/${this.props.params.id}/jsonld`}>JSON-LD</a>
+              <br/>
+              <br/>
+              <a href={`/resources/${this.props.params.id}/nt`}>N-Triples</a>
+            </div>
+          </div>
+        </div>
+        <Footer></Footer>
+      </div>
 
-
-								</div>
-
-
-
-
-							</div>
-							<div  className="two columns resource-data-links">
-									<a href={`/resources/${this.props.params.id}/jsonld`}>JSON-LD</a><br/><br/>
-									<a href={`/resources/${this.props.params.id}/nt`}>N-Triples</a>
-
-							</div>
-						</div>
-					</div>
-
-
-					<Footer></Footer>
-				</div>
-
-
-			)
-		}
-
-	}
-});
-
+      )
+    }
+  }
+})
 
 const OWILinks = React.createClass({
+  componentDidMount: function () {
+    var self = this
 
-	componentDidMount: function(){
-		var self = this
+    if (this.props.owi) {
+      resourceByOwi(this.props.owi, function (results) {
+        console.log(results)
+        self.setState({data: results.data})
+      })
+    }
+  },
 
-		console.log("DOING ODSUFADSF ASDF ADSF ",this.props.owi)
-		if (this.props.owi){
-			resourceByOwi(this.props.owi,function(results){
-			 console.log(results)
-			 self.setState({data:results.data})
+  shouldComponentUpdate: function (nextProps, nextState) {
+    return true
+  },
 
-
-			})
-		}
-
-
-	},
-
-	shouldComponentUpdate: function(nextProps, nextState) {
-	  return true
-	},
-
-	componentWillReceiveProps: function(nextProps) {
-		if (this.props.owi){
-			resourceByOwi(nextProps.owi,function(results){
-			 this.setState({data:results.data})
-			}.bind(this))
-		}
-
-	},
-
-
-
+  componentWillReceiveProps: function (nextProps) {
+    if (this.props.owi) {
+      resourceByOwi(nextProps.owi, function (results) {
+        this.setState({data: results.data})
+      }.bind(this))
+    }
+  },
 
   render() {
+    if (!this.state) {
+      return (
+      <div>
+      </div>
+      )
+    } else {
+      var id = this.props.id
+      var hasRelated = false
+      console.log('HERE')
+      var realtedEd = this.state.data.itemListElement.map(owi => {
 
+        if (parseInt(id) === parseInt(owi.result['@id'].replace('res:', ''))) return <span/>
 
+        if (owi.result && owi.result.dateStart && owi.result.title) {
+          hasRelated = true
+          return <span><Link to={owi.result['@id'].replace('res:', 'resources/')}> ({owi.result.dateStart}) {owi.result.title} </Link><br/></span>
+        }else if (owi.result && owi.result.title) {
+          hasRelated = true
+          return <span><Link to={owi.result['@id'].replace('res:', 'resources/')}> {owi.result.title} </Link><br/></span>
+        } else {
+          return <span/>
+        }
+      })
 
-
-
-  	if (!this.state){
-
-	    return (
-	      <div>
-
-	      </div>
-	    )
-
-  	}else{
-
-	  	var id = this.props.id
-	  	var hasRelated = false
-	  	console.log("HERE")
-	  	var realtedEd = this.state.data.itemListElement.map(owi => {
-
-				if (parseInt(id)===parseInt( owi.result['@id'].replace("res:","") )) return <span/>
-
-				if (owi.result && owi.result.dateStart && owi.result.title){
-					hasRelated=true
-					return <span><Link to={owi.result['@id'].replace("res:","resources/")}>({owi.result.dateStart}) {owi.result.title}</Link><br/></span>
-
-				}else if (owi.result && owi.result.title){
-					hasRelated=true
-					return <span><Link to={owi.result['@id'].replace("res:","resources/")}>{owi.result.title}</Link><br/></span>
-				}else{
-					return <span/>
-				}
-			})
-
-
-
-
-  		if (hasRelated){
-		    return (
-		      <div className="resource-owi-box">
-		      	<span>Related Editions:</span><br/>
-		      	{realtedEd}
-		      </div>
-		    )
-
-
-  		}else{
-
-		    return (
-		      <span/>
-		    )
-
-  		}
-
-
-
-  	}
-
+      if (hasRelated) {
+        return (
+        <div className="resource-owi-box">
+          <span>Related Editions:</span>
+          <br/>
+          {realtedEd}
+        </div>
+        )
+      } else {
+        return (
+        <span/>
+        )
+      }
+    }
   }
-});
+})
 
-
-
-
-function mapStateToProps(state) {
-	return {
-		whatever: state.counter,
-		history: state.history
-	}
+function mapStateToProps (state) {
+  return {
+    whatever: state.counter,
+    history: state.history
+  }
 }
-
 
 // Which action creators does it want to receive by props?
-function mapDispatchToProps(dispatch) {
-	return {
-		onIncrement: () => dispatch(increment())
-	}
+function mapDispatchToProps (dispatch) {
+  return {
+    onIncrement: () => dispatch(increment())
+  }
 }
 
-
-
 export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(ResourcePage);
-
-
+  mapStateToProps,
+  mapDispatchToProps
+)(ResourcePage)

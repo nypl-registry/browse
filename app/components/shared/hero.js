@@ -1,4 +1,5 @@
 import React from 'react';
+import { downloadCover } from '../../utils.js';
 
 const Hero = React.createClass({
 
@@ -11,45 +12,76 @@ const Hero = React.createClass({
 
 
   },
-  componentWillUpdate(){
+  shouldComponentUpdate(){
+
+    return true;
 
 
+  },
+  componentWillReceiveProps: function(nextProps) {
 
+    this.setState({image: false})
+
+    if(nextProps && nextProps.image && nextProps.image.url && nextProps.image.url.idBnum){
+      downloadCover(nextProps.image.url.idBnum,function(err,results){
+        if (results){
+          this.setState({image: results})
+        }
+      }.bind(this))
+    }
 
   },
 
 
+
+
   render() {
 
+    console.log("~~~~~~~~~~~~~~~RENDERING")
+    var hideImage = false
     var maskStyle = {}
     var textMiddleClass = "", textLowerClass = ""
     if (Array.isArray(this.props.image)){
       var random = this.props.image[Math.floor(Math.random()*this.props.image.length)]
-      var heroImageStyle = { backgroundPositionX: '-30px', backgroundImage : "url(http://images.nypl.org/index.php?id="+random.imageID+"&t=w)", backgroundSize: "cover" } 
-      var heroImageLink =  random.url 
-      var heroImageAlt =  random.title 
+      var heroImageStyle = { backgroundPositionX: '-30px', backgroundImage : "url(http://images.nypl.org/index.php?id="+random.imageID+"&t=w)", backgroundSize: "cover" }
+      var heroImageLink =  random.url
+      var heroImageAlt =  random.title
     }else if (this.props.image){
-      var heroImageStyle = { backgroundPositionX: 'center',  backgroundImage : `url(${this.props.image.url})`, backgroundSize: "cover" } 
+      var heroImageStyle = { backgroundPositionX: 'center',  backgroundImage : `url(${this.props.image.url})`, backgroundSize: "cover" }
+
+      if(this.props && this.props.image && this.props.image.url && this.props.image.url.idBnum) hideImage = true
+
+
+
+
     }else if (!this.props.image){
       maskStyle =  {display:"none"}
     }
 
-    if (this.props.image) if (this.props.image.url === false) maskStyle =  {display:"none"}
+    var textMiddle = this.props.textMiddle
 
-  
-    console.log(this.props,"<<<",maskStyle,this.props.image.url)
+    if (textMiddle.length>80) textMiddle = `${textMiddle.substr(0,80)}...`
+
+    if (this.props.image) if (this.props.image.url === false) maskStyle =  {display:"none"}
+    if (hideImage) maskStyle =  {display:"none"}
+
+    if (this.state.image) {
+      heroImageStyle = { backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundImage : `url("data:image/jpg;base64,${this.state.image}")`, backgroundSize: "contain" }
+      maskStyle = {}
+    }
+
 
     if (this.props.textMiddleClass) textMiddleClass = this.props.textMiddleClass
     if (this.props.textLowerClass) textLowerClass = this.props.textLowerClass
 
 
     return (
-      <div className="hero">      
+      <div className="hero">
         <div className="container">
           <div className="row">
             <div className="six columns hero-left">
               <div>{ this.props.textUpper }</div>
-              <h2 className={textMiddleClass}>{ this.props.textMiddle }</h2>
+              <h2 className={textMiddleClass}>{ textMiddle }</h2>
               <div className={textLowerClass}>{ this.props.textLower }</div>
             </div>
             <div className="six columns hero-right">
