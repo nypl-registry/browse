@@ -13,7 +13,7 @@ var app = express();
 
 
 if (__DEV__) {
-  var port = 5000;
+  var port = 5002;
   var API_URL = "http://localhost:3000/api/v1/"
   var webpackConfig = require('./webpack.config.dev');
   var compiler = webpack(webpackConfig);

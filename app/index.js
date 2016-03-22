@@ -16,6 +16,8 @@ import Agents from './components/agents/agents';
 import AgentSearchResults from './components/agents/agentsSearchResults';
 import AgentPage from './components/agents/agentPage';
 import ResourcePage from './components/resources/resourcePage';
+import ResourceSearchResults from './components/resources/resourcesSearchResults';
+import Resources from './components/resources/resources';
 
 
 import './styles/nypl_styleguide.css';
@@ -53,7 +55,8 @@ render((
 			<Route path="/agents" component={Agents}/>
 			<Route path="/agents/search" component={AgentSearchResults}/>
 			<Route path="/agents/:id" component={AgentPage}/>
-			<Route path="/resources" component={ResourcePage}/>
+			<Route path="/resources" component={Resources}/>
+			<Route path="/resources/search" component={ResourceSearchResults}/>
 			<Route path="/resources/:id" component={ResourcePage}/>
 
 

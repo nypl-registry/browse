@@ -449,3 +449,17 @@
 		}
 	}
 }
+
+/* Resource result item (currently descended from.agent-listing-item..) */
+
+.resource-title-dates {
+  color: $coolgray-color
+}
+
+.resource-title-dates:before {
+  content: '('
+}
+
+.resource-title-dates:after {
+  content: ')'
+}

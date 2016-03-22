@@ -43,7 +43,7 @@ const App = React.createClass({
                		<br/><br/>
                		<div><Link to="/agents">Explore Agents</Link></div>
                		<div>Explore Terms (coming soon)</div>
-               		<div>Explore Resources (coming soon)</div>
+               		<div><Link to="/resources">Explore Resources</Link></div>
                		</div>
               </div>
             </div>
