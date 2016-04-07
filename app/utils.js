@@ -10,6 +10,16 @@ export function randomColor () {
   return colors[Math.floor(Math.random() * colors.length)]
 }
 
+export function randomColorFor (val) {
+  var pos = parseInt(val) % colors.length
+  return colors[pos]
+}
+
+export function deepEqual (a1, a2) {
+  // TODO: this should use a proper deep-diff that doesn't produce false positives:
+  return JSON.stringify(a1) === JSON.stringify(a2)
+}
+
 export function debounce (func, wait, immediate) {
   var timeout
   return function () {
@@ -26,7 +36,7 @@ export function debounce (func, wait, immediate) {
   }
 }
 
-function apiHistoryPush (desc, url) {
+export function apiHistoryPush (desc, url) {
   window.apiHistory.push({ desc: desc, url: url })
 }
 
@@ -73,12 +83,12 @@ export function randomResources (cb) {
       action: 'random'
     }
   })
-    .then(function (response) {
-      cb(response)
-    })
-    .catch(function (response) {
-      console.log(response)
-    })
+  .then(function (response) {
+    cb(response)
+  })
+  .catch(function (response) {
+    console.log(response)
+  })
 }
 
 export function randomAgents (cb) {
@@ -123,31 +133,33 @@ export function agentResources (id, cb) {
       value: id
     }
   })
-    .then(function (response) {
-      // make it into a response it expects
-      var results = { contributed: {}, about: {} }
-      response.data.itemListElement.forEach((r) => {
-        if (r.isContributor) {
-          if (!results.contributed[r.prefLabel]) results.contributed[r.prefLabel] = []
-          results.contributed[r.prefLabel].push({
-            title: r.result.title,
-            startYear: r.result.startYear,
-            uri: r.result['@id'].split(':')[1]
-          })
-        } else {
-          if (!results.about[r.prefLabel]) results.about[r.prefLabel] = []
-          results.about[r.prefLabel].push({
-            title: r.result.title,
-            startYear: r.result.startYear,
-            uri: r.result['@id'].split(':')[1]
-          })
-        }
-      })
-      cb(results)
+  .then(function (response) {
+    // make it into a response it expects
+    var results = { contributed: {}, about: {} }
+    response.data.itemListElement.forEach((r) => {
+      if (r.isContributor) {
+        if (!results.contributed[r.prefLabel]) results.contributed[r.prefLabel] = []
+        results.contributed[r.prefLabel].push({
+          title: r.result.title,
+          startYear: r.result.startYear,
+          idBnum: r.result.idBnum,
+          uri: r.result['@id'].split(':')[1]
+        })
+      } else {
+        if (!results.about[r.prefLabel]) results.about[r.prefLabel] = []
+        results.about[r.prefLabel].push({
+          title: r.result.title,
+          startYear: r.result.startYear,
+          idBnum: r.result.idBnum,
+          uri: r.result['@id'].split(':')[1]
+        })
+      }
     })
-    .catch(function (response) {
-      console.log(response)
-    })
+    cb(results)
+  })
+  .catch(function (response) {
+    console.log(response)
+  })
 }
 
 export function agentImagesOf (id, cb) {
@@ -199,3 +211,51 @@ export function resourceOverview (id, cb) {
       console.log(response)
     })
 }
+
+function _arrayBufferToBase64 (buffer) {
+  var binary = ''
+  var bytes = new Uint8Array(buffer)
+  var len = bytes.byteLength
+  for (var i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i])
+  }
+  return window.btoa(binary)
+}
+
+export function downloadCover (idBnum, cb) {
+  // apiHistoryPush(`Overview for resource: '${id}'`, `${API_URL}resources/?action=overview&value=${id}`)
+
+  console.log(`http://s3.amazonaws.com/data.nypl.org/bookcovers/${idBnum}.jpg`)
+
+  axios.get(`http://s3.amazonaws.com/data.nypl.org/bookcovers/${idBnum}.jpg`, {
+    responseType: 'arraybuffer'
+  })
+  .then(function (response) {
+    cb(null, _arrayBufferToBase64(response.data))
+  })
+  .catch(function (response) {
+    console.log(`http://s3.amazonaws.com/data.nypl.org/bookcovers/${idBnum}_ol.jpg`)
+    // try the OL version
+    axios.get(`http://s3.amazonaws.com/data.nypl.org/bookcovers/${idBnum}_ol.jpg`, {
+      responseType: 'arraybuffer'
+    })
+    .then(function (response) {
+      if (response.status === 403) {
+        cb(true, false)
+      } else {
+        cb(null, _arrayBufferToBase64(response.data))
+      }
+    })
+    .catch(function (response) {
+      cb(true, false)
+    })
+  })
+}
+
+export function merge_options (obj1, obj2) {
+  var obj3 = {}
+  for (var _a1 in obj1) obj3[_a1] = obj1[_a1]
+  for (var _a2 in obj2) obj3[_a2] = obj2[_a2]
+  return obj3
+}
+

@@ -1,4 +1,35 @@
 @import "colors";
+@import "_flexbox";
+@import "nypl_styleguide";
+
+/* Typography */
+
+// some sensible defaults, since styleguide doesn't set these:
+p, a, div, li {
+  font-family: 'Kievit-Book', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 21px;
+  letter-spacing: 0.01em;
+}
+
+ul {
+  padding-left: 1em;
+
+  li {
+    padding-bottom: 1em;
+  }
+}
+
+// Import styleguide heading styles into default h2/h3 ( from http://ethyl.nypl.org/section/8 )
+h2 {
+  font-size: 1.8rem;
+}
+
+h3 {
+  font-size: 1.3rem;
+  padding: 1em 0;
+}
 
 
 /* Header */
@@ -190,7 +221,7 @@
 .agents-search-small{
 	margin-top: 20px;
 	width: 400px !important;
-
+  padding: 5px;
 
 	font-family: 'Kievit-Regular';
 	font-size: 1.5em !important;
@@ -216,7 +247,11 @@
 
 		border-radius: 300px;
 		position: relative;
+    background-color: gray;
 
+   .lg-icon {
+     color: white;
+   }
 	}
 	.agents-search-examples-image:after{
 		padding-top: 100%;
@@ -359,6 +394,22 @@
 
 
 	}
+
+	.agent-resources-list-item-bookcover{
+
+		img{
+			height: 40px;
+			width: auto;
+		}
+
+		transition: all .1s ease-in-out;
+
+		&:hover{
+			transform: scale(8)
+
+		}
+
+	}
 	.agent-resources-list-item-title-link{
 		text-decoration: none;
 		color:$charcoal;
@@ -389,6 +440,7 @@
 	border-radius: 3px;
 	font-size: 0.9em;
 	background-color: lightyellow;
+	overflow: hidden;
 
 	div{
 		margin-bottom: 8px;
@@ -454,6 +506,12 @@
 
 .resource-title-dates {
   color: $coolgray-color
+
+  span:nth-of-type(2) {
+    &:before {
+      content: ' - '
+    }
+  }
 }
 
 .resource-title-dates:before {
@@ -462,4 +520,200 @@
 
 .resource-title-dates:after {
   content: ')'
+}
+
+
+.timeline-histogram-aggregations {
+  margin-bottom: 30px;
+
+  li {
+    display: inline-block;
+    width: 4px;
+    height:100px;
+    position:relative;
+
+    .bar {
+      display: block;
+      position:absolute;
+      bottom: 0;
+      border: solid gray 1px;
+      height: 0;
+      z-index: 1;
+
+      .label {
+        position:absolute;
+        bottom: -24px;
+      }
+    }
+
+    .yearLabel {
+      background-color: white;
+      position: absolute;
+      z-index:2;
+      display: none;
+      bottom: 18px;
+    }
+
+    &:hover {
+      width: 10px;
+
+      .bar {
+        width: 10px;
+        background-color: $secondary-color;
+        border-color: $secondary-color;
+      }
+
+      .yearLabel {
+        display: block;
+      }
+    }
+  }
+}
+
+.search-results-aggregations {
+  
+  // .sub-menu:
+  .full {
+    width: 100%;
+
+    a {
+      @include flexbox();
+      width: 100%;
+
+      .label {
+        @include flex-grow(3)
+        width: 88%;
+      }
+
+      .count {
+        @include flex-grow(1)
+        width: 34%;
+        color: $coolgray-color;
+      }
+    }
+
+    ul {
+      margin-bottom:32px;
+    }
+  }
+}
+
+.filters-control {
+  margin: 2em 0;
+
+  li {
+    display: inline-block;
+    margin-right: 1em;
+
+    a {
+      @extend .btn;
+      text-decoration:none;
+
+      .nypl-icon-circle-x {
+        margin-right: 10px;
+      }
+    }
+  }
+}
+
+.resource-description {
+  line-height: 1.4em;
+  font-size: 1.1em;
+}
+
+.filter-link {
+  text-decoration: none;
+}
+
+dl {
+  margin-top: 1em;
+
+  dt {
+    font-weight: bold;
+  }
+
+  dd {
+    margin-left: 1em;
+    margin-bottom: 0.5em;
+  }
+}
+
+/* Loading Indicator */
+
+.loading-indicator {
+  width: 100%;
+  padding: 1em;
+  text-align: center;
+  color: $coolgray-color;
+  margin-top: 50px;
+}
+
+.spinner {
+  margin: 20px auto 0;
+  width: 70px;
+  text-align: center;
+}
+
+.spinner > div {
+  width: 18px;
+  height: 18px;
+  background-color: $coolgray-color;
+
+  border-radius: 100%;
+  display: inline-block;
+  -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+
+@-webkit-keyframes sk-bouncedelay {
+  0%, 80%, 100% { -webkit-transform: scale(0) }
+  40% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% { 
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  } 40% { 
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+}
+
+.random-more {
+  margin-left: 1em;
+  cursor: pointer;
+}
+
+
+.search-box {
+  position: relative;
+  text-align: center;
+}
+
+.search-results {
+  .search-box {
+    text-align:left;
+
+    button {
+      display:none;
+    }
+  }
+}
+
+.resource-page-image {
+  img {
+    max-width: 400px;
+  }
+
 }

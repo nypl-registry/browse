@@ -1,4 +1,5 @@
 import React from 'react'
+import { downloadCover } from '../../utils.js'
 
 const Hero = React.createClass({
   componentWillMount () {
@@ -8,9 +9,26 @@ const Hero = React.createClass({
     this.setState({ maskStyle: {} })
   },
 
-  componentWillUpdate () {},
+  shouldComponentUpdate () {
+    return true
+  },
+
+  componentWillReceiveProps: function (nextProps) {
+    this.setState({image: false})
+
+    if (nextProps && nextProps.image && nextProps.image.url && nextProps.image.url.idBnum) {
+      downloadCover(nextProps.image.url.idBnum, function (err, results) {
+        if (err) throw err
+        if (results) {
+          this.setState({image: results})
+        }
+      }.bind(this))
+    }
+  },
 
   render () {
+    console.log('~~~~~~~~~~~~~~~RENDERING')
+    var hideImage = false
     var maskStyle = {}
     var textMiddleClass = ''
     var textLowerClass = ''
@@ -22,13 +40,23 @@ const Hero = React.createClass({
       var heroImageAlt = random.title
     } else if (this.props.image) {
       heroImageStyle = { backgroundPositionX: 'center', backgroundImage: `url(${this.props.image.url})`, backgroundSize: 'cover' }
+
+      if (this.props && this.props.image && this.props.image.url && this.props.image.url.idBnum) hideImage = true
     } else if (!this.props.image) {
       maskStyle = {display: 'none'}
     }
 
-    if (this.props.image) if (this.props.image.url === false) maskStyle = {display: 'none'}
+    var textMiddle = this.props.textMiddle
 
-    console.log(this.props, '<<<', maskStyle, this.props.image.url)
+    if (textMiddle.length > 80) textMiddle = `${textMiddle.substr(0, 80)}...`
+
+    if (this.props.image) if (this.props.image.url === false) maskStyle = {display: 'none'}
+    if (hideImage) maskStyle = {display: 'none'}
+
+    if (this.state.image) {
+      heroImageStyle = { backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundImage: `url("data:image/jpg;base64,${this.state.image}")`, backgroundSize: 'contain' }
+      maskStyle = {}
+    }
 
     if (this.props.textMiddleClass) textMiddleClass = this.props.textMiddleClass
     if (this.props.textLowerClass) textLowerClass = this.props.textLowerClass
@@ -41,7 +69,7 @@ const Hero = React.createClass({
               <div>
                 {this.props.textUpper}
               </div>
-              <h2 className={textMiddleClass}>{this.props.textMiddle}</h2>
+              <h2 className={textMiddleClass}>{textMiddle}</h2>
               <div className={textLowerClass}>
                 {this.props.textLower}
               </div>

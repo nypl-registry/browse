@@ -1,13 +1,24 @@
-import React                      from 'react';
+import React from 'react'
 
 const LoadingIndicator = React.createClass({
-  getDefaultProps: function() {
+  getDefaultProps () {
     return {
       message: 'Loading ...'
     }
   },
-  render() {
-    return <div className="loading-indicator">{this.props.message}</div>
+
+  renderSpinner () {
+    return (
+      <div className='spinner'>
+        <div className='bounce1'></div>
+        <div className='bounce2'></div>
+        <div className='bounce3'></div>
+      </div>
+    )
+  },
+
+  render () {
+    return <div className='loading-indicator'><div>{this.props.message}</div>{this.renderSpinner()}</div>
   }
 })
 

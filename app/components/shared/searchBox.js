@@ -1,27 +1,29 @@
-/* global increment */
-
+/* global clearTimeout setTimeout */
 import React from 'react'
-// import { Router, Route, Link } from 'react-router'
-import { connect } from 'react-redux'
 
 const SearchBox = React.createClass({
   getDefaultProps: function () {
     return {
+      className: 'agent-search-large',
+      delayToAutoSearch: 600 // ms delay to wait before automatically submitting entered query
     }
   },
 
   propTypes: {
-    endpoint: React.PropTypes.string.isRequired
+    onSubmit: React.PropTypes.func.isRequired
   },
 
   handleKeyUp: function (event) {
-    if (event.target.value.length > 3) {
-      window.browseHistory.push(this.props.endpoint + event.target.value)
-    }
+    if (this.timeout) clearTimeout(this.timeout)
+    this.timeout = setTimeout(() => {
+      // console.log('Live search: ', this.refs._input.value)
+      var q = this.refs._input.value
+      if (q) this.props.onSubmit({ q: q })
+    }, this.props.delayToAutoSearch)
   },
 
   handleSubmit: function (event) {
-    window.browseHistory.push(this.props.endpoint + event.target[0].value)
+    this.props.onSubmit({ q: event.target[0].value })
 
     event.preventDefault()
     return false
@@ -29,15 +31,16 @@ const SearchBox = React.createClass({
 
   render () {
     return (
-      <div style={{position: 'relative', textAlign: 'center'}}>
+      <div className='search-box'>
         <form onSubmit={this.handleSubmit}>
           <input
             onKeyUp={this.handleKeyUp}
             autoFocus='autofocus'
-            className='agent-search-large'
+            className={this.props.className}
             placeholder='Search'
-            type='search'>
-          </input>
+            type='search'
+            ref='_input'
+          />
           <button className='btn-large btn-search' style={{position: 'absolute', bottom: '20px'}}>
             <span className='visuallyHidden'>(Label)</span>
           </button>
@@ -47,21 +50,4 @@ const SearchBox = React.createClass({
   }
 })
 
-function mapStateToProps (state) {
-  return {
-    whatever: state.counter,
-    history: state.history
-  }
-}
-
-// Which action creators does it want to receive by props?
-function mapDispatchToProps (dispatch) {
-  return {
-    onIncrement: () => dispatch(increment())
-  }
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SearchBox)
+export default SearchBox

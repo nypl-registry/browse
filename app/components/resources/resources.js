@@ -39,15 +39,7 @@ const Resources = React.createClass({
             </div>
           </div>
         </div>
-        <div className='container'>
-          <div className='agents-search-examples-header'>
-            Examples
-          </div>
-          <hr style={{marginTop: 10, marginBottom: 10}} />
-          <div className='row'>
-            <RandomResources/>
-          </div>
-        </div>
+        <RandomResources />
       </div>
     )
   }

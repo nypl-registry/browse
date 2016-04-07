@@ -1,4 +1,4 @@
-export default function history(state = null, action) {
+export default function history (state = null, action) {
   switch (action.type) {
     case 'INCREMENT':
       return state + 1

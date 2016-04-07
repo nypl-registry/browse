@@ -1,42 +1,56 @@
-/* global increment */
 
 import React from 'react'
+// import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { searchResourcesByTitle, randomColor } from '../../utils.js'
+import { randomColorFor } from '../../utils.js'
+// import Resource from '../../models/resource.js'
 
 import HeaderNav from '../shared/header_nav.js'
+import AggregationsNav from '../shared/aggregations_nav.js'
+
+import { fetchResourcesIfNeeded, fetchResourcesAggregationsIfNeeded, transitionTo } from '../../actions'
+import qs from 'qs'
 
 var rowColor = 'white'
 
 const ResourcesSearchResultsItem = React.createClass({
+
+  propTypes () {
+    return {
+      resource: React.PropTypes.object.isRequired
+    }
+  },
+
   render () {
+    // console.log('render resource: ', this.props.resource)
     var image = {position: 'relative'}
-    var styleLionColor = { color: randomColor() }
-    if (this.props.data.depiction) {
-      image = { background: 'url(' + this.props.data.depiction + ')', position: 'relative' }
+    var styleLionColor = { color: randomColorFor(this.props.resource.uri) }
+    if (this.props.resource.depiction) {
+      image = { background: 'url(' + this.props.resource.depiction + ')', position: 'relative' }
       styleLionColor = { display: 'none' }
     }
 
     var rowColorStyle = (rowColor === 'white') ? { background: 'whitesmoke' } : { background: 'white' }
     rowColor = rowColorStyle.background
 
-    var resourcesNoun = (this.props.data.useCount === 1) ? 'resource' : 'resources'
-    var resourcesStatement = this.props.data.useCount ? <span>{this.props.data.useCount} {resourcesNoun}</span> : null
+    var resourcesNoun = (this.props.resource.useCount === 1) ? 'resource' : 'resources'
+    var resourcesStatement = this.props.resource.useCount ? <span>{this.props.resource.useCount} {resourcesNoun}</span> : null
 
-    var contributorStatement = this.props.data.contributorLabels.join(', ') // map((c) => <span>{c}</span>)
+    var contributorStatement = '' // this.props.resource.contributorLabels.join(', ') // map((c) => <span>{c}</span>)
 
     var desc = <div>{contributorStatement}<br />{resourcesStatement}</div>
 
-    var title = this.props.data.prefLabel
+    var title = this.props.resource.prefLabel
 
     var dates = []
-    if (this.props.data.dateStartString) dates.push(this.props.data.dateStartString)
-    if (this.props.data.dateEndString) dates.push(this.props.data.dateEndString)
-    dates = dates.length > 0 ? <span className='resource-title-dates'>{dates.map((d) => <span>{d}</span>)}</span> : null
+    if (this.props.resource.dateStartString) dates.push(this.props.resource.dateStartString)
+    if (this.props.resource.dateEndString) dates.push(this.props.resource.dateEndString)
+    dates = dates.length > 0 ? <span className='resource-title-dates'>{dates.map((d, ind) => <span key={ind}>{d}</span>)}</span> : null
 
     return (
-      <Link className='agent-listing-item-link' to={`/resources/${this.props.data['@id'].split(':')[1]}`}>
+      <Link className='agent-listing-item-link' to={this.props.resource.localUrl} key={this.props.resource.id}>
         <div className='row agent-listing-item' style={rowColorStyle}>
           <div className='three columns agent-listing-image' style={image}>
             <span style={styleLionColor} className='lg-icon nypl-icon-logo-mark agent-listing-image-placeholder'></span>
@@ -51,7 +65,7 @@ const ResourcesSearchResultsItem = React.createClass({
           </div>
           <div className='four columns agent-listing-terms-aligner'>
             <div className='agent-listing-terms'>
-              {this.props.data.termLabels.map((l) => <span key={l}>{l}<br/></span>)}
+              {this.props.resource.termLabels.map((l, ind) => <span key={ind}>{l}<br/></span>)}
             </div>
           </div>
         </div>
@@ -60,78 +74,88 @@ const ResourcesSearchResultsItem = React.createClass({
   }
 })
 
+// class ResourcesSearchResults extends Component {
 const ResourcesSearchResults = React.createClass({
+
+  propTypes: {
+    query: React.PropTypes.object.isRequired,
+    items: React.PropTypes.array.isRequired,
+    isFetching: React.PropTypes.bool.isRequired,
+    lastUpdated: React.PropTypes.number
+  },
+
   getInitialState: function () {
     return {
-      results: []
+      enteredKeyword: this.props.location.query.q
     }
   },
 
-  componentDidMount: function () {
-    let q = '' || (this.props.location.query.q) ? this.props.location.query.q : ''
-    let self = this
+  fetch (query) {
+    console.log('Fetch: ', query)
+    this.props.fetch(query)
+    this.props.fetchAggregations(query)
+  },
 
-    searchResourcesByTitle(q, function (results) {
-      var rAry = []
-      results.data.itemListElement.forEach((r) => {
-        rAry.push(<ResourcesSearchResultsItem key={r.result['@id']} data={r.result} />)
-      })
-      self.setState({results: rAry})
-    })
-    this._input.focus()
-    var val = this._input.value
-    this._input.value = ''
-    this._input.value = val
+  componentDidMount () {
+    const { location } = this.props
+    this.fetch(location.query)
+  },
+
+  componentWillReceiveProps (nextProps) {
+    console.log('receive props.. diff? ', qs.stringify(nextProps.query), qs.stringify(this.props.query))
+    // if (qs.stringify(nextProps.query) !== qs.stringify(this.props.query)) {
+    const { location: loc } = nextProps
+    this.fetch(loc.query)
   },
 
   handleKeyUp: function (event) {
-    if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 65 && event.keyCode <= 90) || event.keyCode === 13 || event.keyCode === 8 || event.keyCode === 46) {
-      var self = this
-      window.browseHistory.replace('/resources/search/?q=' + event.target.value)
-
-      self.setState({results: []})
-
-      searchResourcesByTitle(event.target.value, function (results) {
-        var rAry = []
-        results.data.itemListElement.forEach((r) => {
-          rAry.push(<ResourcesSearchResultsItem key={r.result['@id']} data={r.result} />)
-        })
-        self.setState({results: rAry})
-      })
+    // if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 65 && event.keyCode <= 90) || event.keyCode === 13 || event.keyCode === 8 || event.keyCode === 46) {
+    if (event.keyCode === 13) {
+      console.log('navigating to ', event.target.value)
+      this.props.transitionTo('/resources/search', {q: event.target.value})
     }
   },
 
-  handleFocus: function (event) {
-    event.target.value = event.target.value
+  onKeywordChange: function (e) {
+    this.setState({ enteredKeyword: e.target.value })
   },
 
   render () {
-    var results = []
-    this.state.results.forEach(function (result) {
-      results.push(result)
-    })
+    // console.log('search resutls render: ', this.props)
+
     let q = '' || (this.props.location.query.q) ? this.props.location.query.q : ''
+    var aggregationsNav = this.props.aggregations ? <AggregationsNav aggregations={this.props.aggregations} basePath={this.props.route.path} baseQuery={this.props.aggregationsQuery} /> : null
+
     return (
       <div style={{position: 'relative'}}>
         <HeaderNav title='data.nypl / Resources / Search' link='/resources' />
         <div className='container'>
           <div className='row'>
-            <div className='tweleve columns'>
+            <div className='six columns'>
               <input
                 ref={(c) => { this._input = c }}
                 type='text'
                 className='agents-search-small'
                 onKeyUp={this.handleKeyUp}
+                onChange={this.onKeywordChange}
                 onFocus={this.handleFocus}
                 autoFocus='autofocus'
                 defaultValue={q}
                 placeholder='Search'
-                autofocus='autofocus' />
+                autofocus='autofocus'
+                value={this.state.enteredKeyword} />
             </div>
           </div>
         </div>
         <div className='container'>
-          {results}
+          <div className='row'>
+            <div className='three columns'>
+              {aggregationsNav}
+            </div>
+            <div className='nine columns'>
+              {this.props.items.map((res, i) => <ResourcesSearchResultsItem key={i} resource={res} />)}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -140,20 +164,36 @@ const ResourcesSearchResults = React.createClass({
 })
 
 function mapStateToProps (state) {
+  const { resources, router } = state
+  const {
+    query,
+    aggregationsQuery,
+    isFetching,
+    lastUpdated,
+    items,
+    aggregations
+  } = resources || {
+    query: {},
+    isFetching: true,
+    lastUpdated: null,
+    items: [],
+    aggregationsQuery: {},
+    aggregations: []
+  }
+
   return {
-    whatever: state.counter,
-    history: state.history
+    query,
+    items,
+    isFetching,
+    aggregationsQuery,
+    aggregations,
+    lastUpdated,
+    router
   }
 }
 
-// Which action creators does it want to receive by props?
-function mapDispatchToProps (dispatch) {
-  return {
-    onIncrement: () => dispatch(increment())
-  }
+function mapDispatchToProps (dispatch, props) {
+  return bindActionCreators({ fetch: fetchResourcesIfNeeded, fetchAggregations: fetchResourcesAggregationsIfNeeded, transitionTo }, dispatch)
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ResourcesSearchResults)
+export default connect(mapStateToProps, mapDispatchToProps)(ResourcesSearchResults)
