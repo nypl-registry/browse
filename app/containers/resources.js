@@ -31,7 +31,7 @@ const Resources = React.createClass({
   },
 
   search (value) {
-    var url = ['/resources/search', '?q=', value].join('')
+    var url = ['/resources/search', '?q=', value.q].join('')
     this.context.router.push(url)
   },
 
