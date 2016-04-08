@@ -1,11 +1,29 @@
 ---
-# test
+# Deploy Deploy Deploy Deploy
 
 - hosts: all
   remote_user: webserver
   tasks:
     - name: Get stuff from git
       git: repo=https://github.com/nypl-registry/browse.git dest=/home/webserver/browse force=yes
+      register: out
+    - debug: var=out.stdout_lines
+
+    - name: Install NPM
+      command: chdir=/home/webserver/browse/ npm install
+      register: out
+
+    - debug: var=out.stdout_lines
+
+    - name: kill node
+      command: killall node
+      register: out
+      ignore_errors: yes
+
+    - debug: var=out.stdout_lines
+
+    - name: Start server
+      command: forever start /home/webserver/browse/server.js
       register: out
 
     - debug: var=out.stdout_lines

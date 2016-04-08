@@ -57,8 +57,8 @@
     "prebuild": "npm run clean",
     "build": "NODE_ENV=production webpack --config webpack.config.prod.js",
     "postbuild": "",
-    "clean": "rimraf dist && mkdir dist",
-    "deploy": "npm run build && git-directory-deploy --directory dist/ --branch gh-pages",
+    "clean": "rimraf dist && mkdir dist && cp prod_index.html dist/index.html",
+    "olddeploy": "npm run build && git-directory-deploy --directory dist/ --branch gh-pages",
     "lint": "eslint app",
     "start": "NODE_ENV=development nodemon server.js --ignore 'app'"
   },
