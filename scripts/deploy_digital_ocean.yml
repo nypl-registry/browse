@@ -1,0 +1,11 @@
+---
+# test
+
+- hosts: all
+  remote_user: webserver
+  tasks:
+    - name: Get stuff from git
+      git: repo=https://github.com/nypl-registry/browse.git dest=/home/webserver/browse force=yes
+      register: out
+
+    - debug: var=out.stdout_lines
