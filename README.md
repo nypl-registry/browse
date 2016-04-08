@@ -26,8 +26,25 @@ npm run build
 
 ## Deploy
 
-Runs build script, writes contents of `dist` directory to `gh-pages` branch, and pushes to GitHub, using [git-directory-deploy](https://github.com/lukekarrys/git-directory-deploy):
+To deploy you need to have ansible installed (needs to be python2.7)
 
-```shell
-npm run deploy
 ```
+pip install ansible
+```
+Then just execute the /scripts/deploy.sh
+
+```
+./scripts/deploy.sh
+```
+
+It will delete/make the dist dir, copt prod_index.html from the root to dist, build the bundle.js and other dist files and execute the ansible playbook that logs into the server and updates/restarts the server
+You need to have the private key on your system and have the registry-webserver in your ./ssh/config for it to work.
+
+
+```
+Host registry-webserver 123.123.123.123
+    Hostname 123.123.123.123
+    IdentityFile ~/.ssh/the_key
+    User root
+```
+    
