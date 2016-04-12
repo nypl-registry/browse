@@ -23,7 +23,7 @@ const agentsHeroImages = [
 const RandomAgents = React.createClass({
 
   componentDidMount: function() {
-    randomAgents(function (result) {      
+    randomAgents(function (result) {
       this.setState({
         randomAgents : result.data
       })
@@ -35,7 +35,7 @@ const RandomAgents = React.createClass({
     if (this.state){
       var r1 = (this.state.randomAgents) ? this.state.randomAgents.itemListElement[0].result : {}
       var r2 = (this.state.randomAgents) ? this.state.randomAgents.itemListElement[1].result : {}
-      var r3 = (this.state.randomAgents) ? this.state.randomAgents.itemListElement[2].result : {}        
+      var r3 = (this.state.randomAgents) ? this.state.randomAgents.itemListElement[2].result : {}
     }else{
       var r1 = { '@id': ""}
       var r2 = { '@id': ""}
@@ -73,19 +73,21 @@ const RandomAgent = React.createClass({
 });
 
 const Agents = React.createClass({
+
+
   getInitialState: function(){
       return {
           className: ''
       }
   },
-  fadeOut() { 
+  fadeOut() {
     this.setState({className: 'fadeOutFast'})
   },
 
   render() {
     return (
       <div className={this.state.className}>
-        
+
         <HeaderNav title="data.nypl / Agents" link="/"/>
         <Hero image={ agentsHeroImages } textUpper="" textMiddle="Agents" textLower="People, Groups, Corporations"/>
 
@@ -97,7 +99,7 @@ const Agents = React.createClass({
           </div>
         </div>
 
-        
+
         <div className="container">
           <div className="agents-search-examples-header">Examples</div>
           <hr style={{marginTop:10, marginBottom:10}} />
@@ -105,7 +107,7 @@ const Agents = React.createClass({
               <RandomAgents/>
           </div>
         </div>
-        
+
 
       </div>
     );

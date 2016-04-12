@@ -4,6 +4,11 @@ import { connect } from 'react-redux'
 
 const AgentsSearchBox = React.createClass({
 
+
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
+
   componentDidMount: function(){
     //this.getDOMNode().focus()
 
@@ -13,16 +18,15 @@ const AgentsSearchBox = React.createClass({
   handleKeyUp: function(event){
 
     if (event.target.value.length>3){
-      //this.props.fadeOut()
-      //setTimeout(function(){
-      window.browseHistory.push('/agents/search/?q='+event.target.value)
-      //},200)
+      this.context.router.push('/agents/search/?q='+event.target.value)
     }
 
   },
   handleSubmit: function(event){
 
-    window.browseHistory.push('/agents/search/?q='+event.target[0].value)
+    // window.browseHistory.push('/agents/search/?q='+event.target[0].value)
+    this.context.router.push('/agents/search/?q='+event.target[0].value)
+
 
     event.preventDefault()
     return false
@@ -33,12 +37,12 @@ const AgentsSearchBox = React.createClass({
       <div style={{position: "relative", textAlign: "center"}}>
 
         <form onSubmit={this.handleSubmit}>
-          <input 
-            onKeyUp={this.handleKeyUp} 
-            autoFocus="autofocus" 
-            className="agent-search-large" 
-            placeholder="Search" 
-            autofocus="autofocus" 
+          <input
+            onKeyUp={this.handleKeyUp}
+            autoFocus="autofocus"
+            className="agent-search-large"
+            placeholder="Search"
+            autofocus="autofocus"
             type="search">
           </input>
 

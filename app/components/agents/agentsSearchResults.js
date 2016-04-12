@@ -20,22 +20,22 @@ const AgentsSearchResultsItem = React.createClass({
      styleLionColor  = { display: "none"}
     }
 
-    var rowColorStyle = (rowColor==='white') ? { background: "whitesmoke"} : { background: "white"} 
+    var rowColorStyle = (rowColor==='white') ? { background: "whitesmoke"} : { background: "white"}
     rowColor = rowColorStyle.background
 
     var resourcesNoun = (this.props.data.useCount===1) ? "resource" : "resources"
     var desc = <span>{this.props.data.useCount} {resourcesNoun}</span>
     if (this.props.data.topFiveRolesString.length>0) desc = <span>{this.props.data.topFiveRolesString.join(", ")} ({this.props.data.useCount} resources)</span>
     if (this.props.data.description && this.props.data.topFiveRolesString.length>0) desc = <span>{this.props.data.description}<br/>{this.props.data.topFiveRolesString.join(", ")} ({this.props.data.useCount} resources)</span>
-    
+
     var topFiveTermsString = []
     this.props.data.topFiveTermsString.forEach(t=> { topFiveTermsString.push(<span key={`top-five-id-${topFiveTermsString.length}`}>{t}<br/></span>) })
 
 
     return (
       <Link className="agent-listing-item-link" to={`/agents/${this.props.data['@id'].split(":")[1]}`}>
-        <div className="row agent-listing-item" style={rowColorStyle}>        
-          <div className="three columns agent-listing-image" style={image}  >          
+        <div className="row agent-listing-item" style={rowColorStyle}>
+          <div className="three columns agent-listing-image" style={image}  >
               <span style={styleLionColor} className="lg-icon nypl-icon-logo-mark agent-listing-image-placeholder"></span>
           </div>
           <div className="five columns">
@@ -60,6 +60,11 @@ const AgentsSearchResultsItem = React.createClass({
 
 const AgentsSearchResults = React.createClass({
 
+
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
+
   getInitialState: function(){
       return {
           results: []
@@ -73,7 +78,7 @@ const AgentsSearchResults = React.createClass({
     searchAgentByName(q,function(results){
       var rAry = []
       results.data.itemListElement.forEach(r =>{
-        rAry.push(<AgentsSearchResultsItem key={r.result['@id']} data={r.result}/>)             
+        rAry.push(<AgentsSearchResultsItem key={r.result['@id']} data={r.result}/>)
       })
       self.setState({results:rAry})
     })
@@ -81,7 +86,7 @@ const AgentsSearchResults = React.createClass({
     var val = this._input.value
     this._input.value = ''
     this._input.value = val
-  },  
+  },
 
 
   handleKeyUp: function(event){
@@ -89,15 +94,17 @@ const AgentsSearchResults = React.createClass({
     if ((event.keyCode >= 48 && event.keyCode <= 57) || (event.keyCode >= 65 && event.keyCode <= 90) || event.keyCode == 13 || event.keyCode == 8 || event.keyCode == 46  ){
 
       var self = this;
-      window.browseHistory.replace('/agents/search/?q='+event.target.value)
+      //window.browseHistory.replace('/agents/search/?q='+event.target.value)
+      this.context.router.push('/agents/search/?q='+event.target.value)
+
       //this.setSate({ results : this.state.results})
-      
+
       self.setState({results:[]})
-      
+
       searchAgentByName(event.target.value,function(results){
         var rAry = []
         results.data.itemListElement.forEach(r =>{
-          rAry.push(<AgentsSearchResultsItem key={r.result['@id']} data={r.result}/>)             
+          rAry.push(<AgentsSearchResultsItem key={r.result['@id']} data={r.result}/>)
         })
         self.setState({results:rAry})
       })
@@ -113,7 +120,7 @@ const AgentsSearchResults = React.createClass({
   render() {
 
     var results = []
-    this.state.results.forEach(function(result) {      
+    this.state.results.forEach(function(result) {
       results.push(result)
     })
     let q = "" || (this.props.location.query.q) ? this.props.location.query.q : ""
@@ -124,12 +131,12 @@ const AgentsSearchResults = React.createClass({
         <div className="container">
           <div className="row">
             <div className="tweleve columns">
-              <input ref={(c) => this._input = c} type="text" className="agents-search-small" onKeyUp={this.handleKeyUp} onFocus={this.handleFocus} autoFocus="autofocus" defaultValue={q} placeholder="Search" autofocus="autofocus"/>              
+              <input ref={(c) => this._input = c} type="text" className="agents-search-small" onKeyUp={this.handleKeyUp} onFocus={this.handleFocus} autoFocus="autofocus" defaultValue={q} placeholder="Search" autofocus="autofocus"/>
             </div>
           </div>
         </div>
 
-        <div className="container">                      
+        <div className="container">
               {results}
         </div>
 
