@@ -43,7 +43,7 @@ const SearchResults = React.createClass({
   },
 
   renderResults () {
-    if (this.props.query.isFetching) {
+    if (!this.props.query || this.props.query.isFetching) {
       return <LoadingIndicator message='Loading results' />
     } else if (this.props.query && this.props.query.items) {
       return this.props.query.items.map((res, i) => <this.props.resultComponent key={i} rowIndex={i} result={res} />)

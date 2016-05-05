@@ -9,12 +9,10 @@ const API_URL = window.browseAPI
 class BaseModel {
 
   constructor (props = {}) {
-    console.log('props: ', props)
     if (props['@id']) {
       var rdfType = (typeof props['@id'] === 'object') ? props['@id'][0] : props['@id']
       this._type = rdfType.split(':')[0]
       this.id = rdfType.split(':')[1]
-      console.log('parsed type: ', rdfType)
     }
 
     ;['uri', 'prefLabel', 'depiction', 'identifier'].forEach((prop) => {
