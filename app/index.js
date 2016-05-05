@@ -4,6 +4,7 @@ require('es6-promise').polyfill()
 
 import React from 'react'
 import { render } from 'react-dom'
+
 import { Router, Route, useRouterHistory } from 'react-router'
 // import { syncHistoryWithStore } from 'react-router-redux'
 import qs from 'qs'
@@ -29,11 +30,11 @@ const appHistory = createAppHistory({
 const history = appHistory // syncHistoryWithStore(appHistory, store)
 
 import App from './app'
-import Agents from './components/agents/agents'
-import AgentSearchResults from './components/agents/agentsSearchResults'
-import AgentPage from './components/agents/agentPage'
-import ResourcePage from './containers/resource_page'
-import ResourceSearchResults from './containers/search_results'
+import Agents from './containers/agents'
+import AgentsSearchResults from './containers/agentsSearchResults'
+import AgentPage from './containers/agentPage'
+import ResourcePage from './containers/resourcePage'
+import ResourcesSearchResults from './containers/resourcesSearchResults'
 import Resources from './containers/resources'
 
 import './styles/nypl_styleguide.css'
@@ -47,10 +48,10 @@ render((
     <Router history={history}>
       <Route path='/' component={App} />
       <Route path='/agents' component={Agents} />
-      <Route path='/agents/search' component={AgentSearchResults} />
+      <Route path='/agents/search' component={AgentsSearchResults} />
       <Route path='/agents/:id' component={AgentPage} />
       <Route path='/resources' component={Resources} />
-      <Route path='/resources/search' component={ResourceSearchResults} />
+      <Route path='/resources/search' component={ResourcesSearchResults} />
       <Route path='/resources/:id' component={ResourcePage} />
     </Router>
   </Provider>

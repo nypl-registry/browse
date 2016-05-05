@@ -1,14 +1,13 @@
 import React from 'react'
 import { bindActionCreators } from 'redux'
-// import { Link } from 'react-router'
 import { connect } from 'react-redux'
 
-import { fetchRandomResources } from '../actions'
+import { fetchRandomResources } from '../actions/resources'
 
-import HeaderNav from '../components/shared/header_nav.js'
+import HeaderNav from '../components/shared/headerNav.js'
 import Hero from '../components/shared/hero.js'
 import SearchBox from '../components/shared/searchBox.js'
-import RandomResources from '../components/resources/partials/randomResources.js'
+import RandomResources from '../components/resources/randomResources.js'
 
 const resourcesHeroImages = [
   { imageID: '115822', url: 'http://digitalcollections.nypl.org/items/510d47d9-857a-a3d9-e040-e00a18064a99', title: 'Drilled books, Mar. 27, 1913' },
@@ -16,18 +15,12 @@ const resourcesHeroImages = [
 ]
 
 const Resources = React.createClass({
-  getInitialState () {
-    return {
-      className: ''
-    }
+  componentDidMount () {
+    this.props.fetchRandoms()
   },
 
   contextTypes: {
     router: React.PropTypes.object.isRequired
-  },
-
-  fadeOut () {
-    this.setState({className: 'fadeOutFast'})
   },
 
   search (value) {
@@ -36,8 +29,10 @@ const Resources = React.createClass({
   },
 
   render () {
+    var randoms = this.props.randoms ? <RandomResources resources={this.props.randoms} onFetch={this.props.fetchRandoms} /> : null
+
     return (
-      <div className={this.state.className}>
+      <div>
         <HeaderNav title='data.nypl / Resources' link='/' />
         <Hero
           image={resourcesHeroImages}
@@ -51,30 +46,27 @@ const Resources = React.createClass({
             </div>
           </div>
         </div>
-        <RandomResources items={this.props.items} onFetch={this.props.fetchRandomResources} />
+        {randoms}
       </div>
     )
   }
 })
 
 function mapStateToProps (state) {
-  const { randomResources } = state
+  const { resources } = state
   const {
-    isFetching,
-    items
-  } = randomResources || {
-    isFetching: true,
-    items: null
+    randoms
+  } = resources || {
+    randoms: { isFetching: true }
   }
 
   return {
-    items,
-    isFetching
+    randoms
   }
 }
 
 function mapDispatchToProps (dispatch, props) {
-  return bindActionCreators({ fetchRandomResources }, dispatch)
+  return bindActionCreators({ fetchRandoms: fetchRandomResources }, dispatch)
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Resources)

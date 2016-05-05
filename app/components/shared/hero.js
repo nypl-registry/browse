@@ -27,7 +27,6 @@ const Hero = React.createClass({
   },
 
   render () {
-    console.log('~~~~~~~~~~~~~~~RENDERING')
     var hideImage = false
     var maskStyle = {}
     var textMiddleClass = ''
@@ -61,6 +60,9 @@ const Hero = React.createClass({
     if (this.props.textMiddleClass) textMiddleClass = this.props.textMiddleClass
     if (this.props.textLowerClass) textLowerClass = this.props.textLowerClass
 
+    var textLower = ''
+    if (this.props.textLower) textLower = this.props.textLower.split('\n').map((t) => <div>{t}</div>)
+
     return (
       <div className='hero'>
         <div className='container'>
@@ -71,7 +73,7 @@ const Hero = React.createClass({
               </div>
               <h2 className={textMiddleClass}>{textMiddle}</h2>
               <div className={textLowerClass}>
-                {this.props.textLower}
+                {textLower}
               </div>
             </div>
             <div className='six columns hero-right'>

@@ -41,7 +41,7 @@ const FiltersControl = React.createClass({
         var newQuery = this.queryStringWithoutFilter(field, v)
 
         var url = [this.props.basePath, '?', stringify(newQuery)].join('')
-        links.push(<li key={[fieldIndex, i].join('-')}><Link to={url}><span className='nypl-icon-circle-x'/>{v}</Link></li>)
+        links.push(<li key={[fieldIndex, i].join('-')}><Link to={url}><span className='nypl-icon-circle-x'/>{field}: {v}</Link></li>)
       })
     })
 

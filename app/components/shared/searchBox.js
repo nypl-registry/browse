@@ -5,20 +5,37 @@ const SearchBox = React.createClass({
   getDefaultProps: function () {
     return {
       className: 'agent-search-large',
-      delayToAutoSearch: 600 // ms delay to wait before automatically submitting entered query
+      delayToAutoSearch: 600, // ms delay to wait before automatically submitting entered query
+      query: {}
     }
   },
 
+  getInitialState () {
+    return {
+      enteredValue: this.props.query.q
+    }
+  },
+
+  componentWillReceiveProps (newProps) {
+    this.setState({ enteredValue: newProps.query.q })
+  },
+
   propTypes: {
-    onSubmit: React.PropTypes.func.isRequired
+    onSubmit: React.PropTypes.func.isRequired,
+    query: React.PropTypes.object
+  },
+
+  handleChange (e) {
+    this.setState({ enteredValue: e.target.value })
   },
 
   handleKeyUp: function (event) {
     if (this.timeout) clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
-      // console.log('Live search: ', this.refs._input.value)
-      var q = this.refs._input.value
-      if (q) this.props.onSubmit({ q: q })
+      if (this.refs._input) {
+        var q = this.refs._input.value
+        if (q) this.props.onSubmit({ q: q })
+      }
     }, this.props.delayToAutoSearch)
   },
 
@@ -40,6 +57,8 @@ const SearchBox = React.createClass({
             placeholder='Search'
             type='search'
             ref='_input'
+            onChange={this.handleChange}
+            value={this.state.enteredValue}
           />
           <button className='btn-large btn-search' style={{position: 'absolute', bottom: '20px'}}>
             <span className='visuallyHidden'>(Label)</span>

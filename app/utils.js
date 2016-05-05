@@ -20,6 +20,35 @@ export function deepEqual (a1, a2) {
   return JSON.stringify(a1) === JSON.stringify(a2)
 }
 
+// Given either an array/string, returns first value of array, or just the string, or null
+export function firstValue (a) {
+  switch (typeof a) {
+    case 'object': return a[0]
+    case 'string': return a
+    case 'undefined': return null
+    default: return a
+  }
+}
+
+// Given either an array/string, returns first value of array, or just the string, or null
+export function joinedValues (a, delim) {
+  switch (typeof a) {
+    case 'object': return a.join(delim)
+    case 'string': return a
+    case 'undefined': return null
+    default: return a
+  }
+}
+
+// Apply cb to given object (or all objects, if array)
+export function eachValue (a, cb) {
+  switch (typeof a) {
+    case 'object': return a.map(cb)
+    case 'undefined': return null
+    default: if (a) return cb(a)
+  }
+}
+
 export function debounce (func, wait, immediate) {
   var timeout
   return function () {

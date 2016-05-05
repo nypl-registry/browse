@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router'
 
-import HeaderNav from './components/shared/header_nav.js'
+import HeaderNav from './components/shared/headerNav.js'
 import Hero from './components/shared/hero.js'
 
 const heroImages = [

@@ -9,26 +9,20 @@ const API_URL = window.browseAPI
 class BaseModel {
 
   constructor (props = {}) {
-    // console.log('props: ', props)
+    console.log('props: ', props)
     if (props['@id']) {
-      this._type = props['@id'].split(':')[0]
-      this.id = props['@id'].split(':')[1]
+      var rdfType = (typeof props['@id'] === 'object') ? props['@id'][0] : props['@id']
+      this._type = rdfType.split(':')[0]
+      this.id = rdfType.split(':')[1]
+      console.log('parsed type: ', rdfType)
     }
 
     ;['uri', 'prefLabel', 'depiction', 'identifier'].forEach((prop) => {
       if (props[prop]) this[prop] = props[prop]
     })
-    this.localUrl = `/${this._type}s/${this.id}`
+    var pluralType = this._type + (this._type[this._type.length - 1] !== 's' ? 's' : '')
+    this.localUrl = `/${pluralType}/${this.id}`
   }
-
-  /* static find (type, filters, castFunction) {
-    BaseModel.apiQuery(type, filters, function (res) {
-      if (res.data.itemListElement) {
-        res.data.itemListElement.map((item) => castFunction(item.result))
-      }
-    })
-  }
-  */
 
   static aggregations (path, params, cb) {
     var _params = { action: 'aggregations' }

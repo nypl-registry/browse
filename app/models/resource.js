@@ -8,11 +8,43 @@ class Resource extends BaseModel {
     Object.keys(props).forEach((prop) => {
       this[prop] = props[prop]
     })
-    /*
-    ;['title', 'contributorLabels', 'dateStartString', 'dateEndString', 'termLabels', 'type'].forEach((prop) => {
-      if (props[prop]) this[prop] = props[prop]
+
+    this.related = {}
+  }
+
+  contributors () {
+    var contributors = this.contributor && this.contributor.length > 0 ? this.contributor : []
+    return contributors
+  }
+
+  hasRelated (type) {
+    return this.related && this.related[type] && this.related[type].length > 0
+  }
+
+  getRelated (type) {
+    if (!this.related || !this.related[type]) return []
+    return this.related[type]
+  }
+
+  hasIdentifier (type) {
+    return (typeof this.getIdentifier(type)) !== 'undefined'
+  }
+
+  getIdentifier (type) {
+    var idents = this.identifiers().filter((identifier) => identifier.type === type)
+    return idents.length > 0 ? idents[0].id : null
+  }
+
+  identifiers () {
+    return this.identifier.map((val) => {
+      var type = val.split(':')[1]
+      var id = val.split(':')[2]
+      return { type: type, id: id }
     })
-    */
+  }
+
+  firstTitle () {
+    return this.title && this.title.length > 0 ? this.title[0] : '[Untitled]'
   }
 
   datesStatement () {

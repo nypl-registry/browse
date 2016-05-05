@@ -6,9 +6,6 @@ import { routerMiddleware } from 'react-router-redux'
 
 import rootReducer from './reducers'
 
-// For dispatching asyncs:
-// import { selectSubreddit, fetchPosts } from './actions'
-
 export default function configureStore (initialState) {
   const store = createStore(
     rootReducer,

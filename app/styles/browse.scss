@@ -595,6 +595,21 @@ h3 {
     ul {
       margin-bottom:32px;
     }
+
+    li {
+      
+      .nypl-icon-circle-x {
+        display: none;
+      }
+
+      &.selected {
+        opacity: 0.5;
+
+        .nypl-icon-circle-x {
+          // display: inline;
+        }
+      }
+    }
   }
 }
 
@@ -716,4 +731,40 @@ dl {
     max-width: 400px;
   }
 
+}
+
+.hierarchy {
+
+  .self {
+    font-weight: bold;
+  }
+
+  li {
+    .level-0 {
+    }
+    .level-1 {
+      margin-left: 1em;
+    }
+    .level-2 {
+      margin-left: 2em;
+    }
+    .level-3 {
+      margin-left: 3em;
+    }
+    .level-4 {
+      margin-left: 4em;
+    }
+    .level-5 {
+      margin-left: 5em;
+    }
+    .level-6 {
+      margin-left: 6em;
+    }
+    .level-7 {
+      margin-left: 7em;
+    }
+    .level-4 {
+      margin-left: 4em;
+    }
+  }
 }

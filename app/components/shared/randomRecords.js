@@ -23,25 +23,6 @@ const RandomRecords = React.createClass({
     }
   },
 
-  componentDidMount () {
-    this.fetchNew()
-  },
-
-  fetchNew () {
-    this.props.onFetch()
-
-    /*
-    this.setState(
-      {loading: true},
-      this.props.onFetch(this.props.fetchCount, (res) => {
-        if (res) {
-          this.setState({ loading: false, records: res })
-        }
-      })
-    )
-    */
-  },
-
   renderRecordElement: function (record) {
     return (
       <div className='four columns' key={record.id}>
@@ -55,10 +36,10 @@ const RandomRecords = React.createClass({
   },
 
   renderRecords: function () {
-    if (this.props.items) {
-      return this.props.items.map((record) => this.renderRecordElement(record))
-    } else {
+    if (this.props.records.isFetching) {
       return <LoadingIndicator message='Loading...' />
+    } else {
+      return this.props.records.items.map((record) => this.renderRecordElement(record))
     }
   },
 
@@ -67,7 +48,7 @@ const RandomRecords = React.createClass({
       <div className='container'>
         <div className='agents-search-examples-header'>
           Examples
-          <a className='random-more' onClick={this.fetchNew}>(more)</a>
+          <a className='random-more' onClick={(e) => this.props.onFetch()}>(more)</a>
         </div>
         <hr style={{marginTop: 10, marginBottom: 10}} />
         <div className='row'>
