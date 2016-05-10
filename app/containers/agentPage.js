@@ -41,9 +41,7 @@ const AgentPage = React.createClass({
       var textMiddle = firstValue(this.props.agent.prefLabel)
       var desc = joinedValues(this.props.agent.description, ' ')
       var textLower = desc
-      console.log('desc: ', desc, textLower)
       if (firstValue(this.props.agent.prefLabel) && this.props.agent.topFiveRolesString.length > 0) {
-        console.log('here: ', textLower, this.props.agent.topFiveRolesString)
         textLower += '\n' + this.props.agent.topFiveRolesString.join(', ')
       }
 

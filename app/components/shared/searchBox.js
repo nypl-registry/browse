@@ -43,7 +43,7 @@ const SearchBox = React.createClass({
         if (q) this.props.onSubmit({ q: q })
 
         // User is no longer typing:
-        this.setState({ userTyping: false })
+        if (this.isMounted()) this.setState({ userTyping: false })
       }
     }, this.props.delayToAutoSearch)
   },

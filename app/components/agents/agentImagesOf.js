@@ -4,11 +4,11 @@ import { agentImagesOf } from '../../utils.js'
 
 const AgentImagesOf = React.createClass({
   componentDidMount: function () {
-    var self = this
-    agentImagesOf(this.props.agentUri, function (results) {
-      self.setState({imagesOf: results.data})
+    agentImagesOf(this.props.agentUri, (results) => {
+      if (this.isMounted()) this.setState({imagesOf: results.data})
     })
   },
+
   render () {
     if (!this.state) {
       return (

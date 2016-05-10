@@ -17,7 +17,7 @@ const OWILinks = React.createClass({
       <div className='resource-owi-box'>
         <ul>
           <lh><b>Related Editions</b></lh>
-          {related.map((el) => <li>{el}</li>)}
+          {related.map((el, i) => <li key={i}>{el}</li>)}
         </ul>
       </div>
     )

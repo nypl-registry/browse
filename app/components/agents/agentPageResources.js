@@ -5,19 +5,35 @@ import { eachValue, agentResources } from '../../utils.js'
 
 import AgentImagesOf from '../agents/agentImagesOf.js'
 import AgentPageResourcesItem from '../agents/agentPageResourcesItem.js'
+import LoadingIndicator from '../shared/loadingIndicator'
 
 const AgentPageResources = React.createClass({
 
   getInitialState () {
     return {
-      resourcesGrouped: {}
+      currentAgentId: null,
+      resourcesGrouped: null
     }
   },
 
   componentDidMount () {
-    agentResources(this.props.agent.id, (results) => {
-      this.setState({ resourcesGrouped: results })
-    })
+    this.loadResources(this.props.agent.id)
+  },
+
+  componentWillReceiveProps (newProps) {
+    this.loadResources(newProps.agent.id)
+  },
+
+  loadResources (agentId) {
+    if (this.state.currentAgentId !== agentId) {
+      this.setState({ currentAgentId: agentId })
+
+      agentResources(agentId, (results) => {
+        if (this.state.currentAgentId === agentId) {
+          this.setState({ resourcesGrouped: results })
+        }
+      })
+    }
   },
 
   loadResoucesClick (children, title, e) {
@@ -27,17 +43,7 @@ const AgentPageResources = React.createClass({
 
   render () {
     if (!this.state.resourcesGrouped) {
-      return (
-        <div className='container'>
-          <div className='row'>
-            <div className='six columns'>
-              <div>
-                Loading Resources
-              </div>
-            </div>
-          </div>
-        </div>
-      )
+      return <LoadingIndicator message='Loading Resources' />
     } else {
       var about = this.state.resourcesGrouped.about
       var contributed = this.state.resourcesGrouped.contributed
