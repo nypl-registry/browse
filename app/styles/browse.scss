@@ -5,8 +5,8 @@
 /* Typography */
 
 // some sensible defaults, since styleguide doesn't set these:
-p, a, div, li {
-  font-family: 'Kievit-Book', sans-serif;
+p, a, div, li, span {
+  font-family: 'Kievit-Book', Arial, sans-serif;
   font-weight: 400;
   font-size: 15px;
   line-height: 21px;
@@ -510,6 +510,32 @@ h3 {
   span:nth-of-type(2) {
     &:before {
       content: ' - '
+    }
+  }
+}
+
+.listing-metadata {
+  .label {
+    color: $coolgray-color;
+  }
+}
+.contributor-statement, .resource-listing-terms {
+  list-style: none;
+  padding-left: 0;
+  display: inline;
+
+  li {
+    display: inline;
+
+    &:after {
+      content: ' ● ';
+      opacity: 0.3;
+    }
+
+    &:last-of-type {
+      &:after {
+        content: '';
+      }
     }
   }
 }

@@ -1,4 +1,5 @@
 import { stringify } from 'qs'
+import { hashRemoveKeys } from '../utils'
 import Resource from '../models/resource.js'
 
 export const constants = {
@@ -99,6 +100,7 @@ function fetchResourcesAggregations (query) {
 
 export function fetchResourcesAggregationsIfNeeded (query) {
   var _query = Object.assign({}, query)
+  _query = hashRemoveKeys(_query, 'page', 'per_page')
   return (dispatch, getState) => {
     if (!getState().resources.aggregationsQueries[queryId(_query)]) {
       return dispatch(fetchResourcesAggregations(_query))

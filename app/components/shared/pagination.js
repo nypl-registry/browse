@@ -1,6 +1,6 @@
 import React from 'react'
-// import { Link } from 'react-router'
-import pluralize from 'pluralize'
+import { Link } from 'react-router'
+import { stringify } from 'qs'
 
 const Pagination = React.createClass({
 
@@ -19,16 +19,21 @@ const Pagination = React.createClass({
     }
   },
 
-  renderCountStatement () {
-    if (this.props.total >= 1) {
-      return <h3 className='headlines tertiary-heading'>Showing {this.props.total.toLocaleString()} {pluralize(this.props.resultType, this.props.total)}</h3>
-    }
+  linkToPage (page, text = 'More') {
+    var props = Object.assign({}, this.props.query.query, { page })
+    var url = this.props.basePath + '?' + stringify(props)
+    return <Link to={url}>{text}</Link>
+  },
+
+  linkToNextPage () {
+    var nextPage = this.props.query.query.page ? parseInt(this.props.query.query.page) + 1 : 2
+    return this.linkToPage(nextPage, 'More')
   },
 
   render () {
     return (
       <div className='pagination'>
-        {this.renderCountStatement()}
+        {this.linkToNextPage()}
       </div>
     )
   }

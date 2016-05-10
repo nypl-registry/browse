@@ -1,3 +1,6 @@
+// PB: FIXME why is this not working
+// var lex = require('nypl-registry-utils-lexicon')
+
 import BaseModel from './base.js'
 
 class Resource extends BaseModel {
@@ -41,6 +44,16 @@ class Resource extends BaseModel {
       var id = val.split(':')[2]
       return { type: type, id: id }
     })
+  }
+
+  resourceType () {
+    // console.log('lex: ', resourceTypesLex())
+    // if ((typeof this.materialType) === 'object') return resourceTypesLex().labels[this.materialType[0]]
+    if ((typeof this.materialType) === 'object') return this.materialType[0].replace(/resourcetypes:/, '')
+  }
+
+  rdfType () {
+    return this.type[0].replace(/nypl:/, '')
   }
 
   firstTitle () {

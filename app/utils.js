@@ -15,6 +15,14 @@ export function randomColorFor (val) {
   return colors[pos]
 }
 
+export function hashRemoveKeys (hash) {
+  var cleanedHash = Object.assign({}, hash)
+  Array.from(arguments).slice(1).forEach((key) => {
+    delete cleanedHash[key]
+  })
+  return cleanedHash
+}
+
 export function deepEqual (a1, a2) {
   // TODO: this should use a proper deep-diff that doesn't produce false positives:
   return JSON.stringify(a1) === JSON.stringify(a2)
@@ -47,6 +55,32 @@ export function eachValue (a, cb) {
     case 'undefined': return null
     default: if (a) return cb(a)
   }
+}
+
+export function urlFor (obj) {
+  var type = null
+  var id = null
+  var matches = null
+  if ((matches = obj['@id'].match(/^(agents|resources|terms):(\d+)/))) {
+    type = matches[1]
+    id = parseInt(matches[2])
+  }
+
+  return `/${type}/${id}`
+  /*
+  var map = {
+    'nypl:Resource': (obj) => `/resources/${obj['@id']}`,
+    'nypl:Agent': (obj) => `/resources/${obj['@id']}`
+  }
+  for (let k in Object.keys(map)) { //  # .forEach((k) => {
+    console.log('url for ', obj, map)
+    if (((typeof obj['@type']) === 'string' && obj['@type'] === k) ||
+          ((typeof obj['@type']) === 'object' && obj['@type'].indexOf(k))) {
+      console.log('map: ', k)
+      return map[k](obj)
+    }
+  }
+  */
 }
 
 export function debounce (func, wait, immediate) {

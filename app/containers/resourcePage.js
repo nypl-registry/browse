@@ -7,6 +7,8 @@ require('core-js/fn/object/entries')
 import { stringify } from 'qs'
 import pluralize from 'pluralize'
 
+import { urlFor } from '../utils.js'
+
 import HeaderNav from '../components/shared/headerNav'
 import Hero from '../components/shared/hero'
 import Footer from '../components/shared/footer'
@@ -136,7 +138,7 @@ const ResourcePage = React.createClass({
   renderContributors () {
     var links = []
     this.item().contributor.forEach((contributor, i) => {
-      var filterLink = this.renderFilterLink({ contributor: contributor.urn }, `Find with contributor ${contributor.label}`)
+      var filterLink = this.renderFilterLink({ contributor: contributor['@id'] }, `Find with contributor ${contributor.label}`)
       var roles = null
       if (contributor.roles) {
         roles = (
@@ -145,7 +147,7 @@ const ResourcePage = React.createClass({
           </h4>
         )
       }
-      links.push(<span key={i}>{roles}<Link to={`/agents/${contributor.id}`}>{contributor.label}</Link> {filterLink}</span>)
+      links.push(<span key={i}>{roles}<Link to={urlFor(contributor)}>{contributor.label}</Link> {filterLink}</span>)
     })
 
     return this.renderProperty('Contributors', links)
@@ -154,8 +156,8 @@ const ResourcePage = React.createClass({
   renderSubjects () {
     var links = []
     this.item().subject.forEach((subject, i) => {
-      var filterLink = this.renderFilterLink({ subject: subject.urn }, `Find resources for ${subject.label}`)
-      links.push(<span key={i}><Link to={`/terms/${subject.id}`}>{subject.label}</Link> {filterLink}</span>)
+      var filterLink = this.renderFilterLink({ subject: subject['@id'] }, `Find resources for ${subject.label}`)
+      links.push(<span key={i}><Link to={urlFor(subject)}>{subject.label}</Link> {filterLink}</span>)
     })
 
     return this.renderProperty('Subjects', links)
@@ -242,7 +244,7 @@ const ResourcePage = React.createClass({
     var parentLinks = parentsTopDown.map((parent, i) => <Link key={i} className={`level-${i}`} to={`/resources/${parent['@id']}`}>{parent.label}</Link>)
     var selfLink = <span key='self' className={`self level-${parentLinks.length}`}><b>{this.item().firstTitle()}</b></span>
 
-    var childLinks = this.item().getRelated('children').map((child, i) => <Link className={`level-${parentLinks.length + 1}`} key={i} to={`/resources/${child['@id']}`}>{child.firstTitle()}</Link>)
+    var childLinks = this.item().getRelated('children').map((child, i) => <Link className={`level-${parentLinks.length + 1}`} key={i} to={urlFor(child)}>{child.firstTitle()}</Link>)
 
     var links = [].concat(parentLinks, selfLink, childLinks)
     return (

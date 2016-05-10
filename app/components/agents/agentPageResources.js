@@ -45,7 +45,6 @@ const AgentPageResources = React.createClass({
       // build the menus
       var aboutMenu = []
       var contributedMenu = []
-      console.log('about: ', about)
       for (let x in about) {
         aboutMenu.push({ children: about[x], label: x, key: `about-menu-${x.substr(0, 2)}-${about[x].length}`, count: `(${about[x].length})` })
       }

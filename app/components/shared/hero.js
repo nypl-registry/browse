@@ -61,7 +61,7 @@ const Hero = React.createClass({
     if (this.props.textLowerClass) textLowerClass = this.props.textLowerClass
 
     var textLower = ''
-    if (this.props.textLower) textLower = this.props.textLower.split('\n').map((t) => <div>{t}</div>)
+    if (this.props.textLower) textLower = this.props.textLower.split('\n').map((t, i) => <div key={i}>{t}</div>)
 
     return (
       <div className='hero'>

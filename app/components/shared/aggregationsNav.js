@@ -37,7 +37,6 @@ const AggregationsNav = React.createClass({
   },
 
   render () {
-    console.log('render aggs: ', this.props.aggregations)
     var aggs = this.props.aggregations.filter((agg) => agg.field !== 'dates')
     var order = ['type', 'subject', 'owner', 'contributor']
     aggs = aggs.sort((a1, a2) => {

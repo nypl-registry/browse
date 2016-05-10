@@ -197,7 +197,6 @@ const OWILinks = React.createClass({
 
     if (this.props.owi) {
       resourceByOwi(this.props.owi, function (results) {
-        console.log(results)
         self.setState({data: results.data})
       })
     }

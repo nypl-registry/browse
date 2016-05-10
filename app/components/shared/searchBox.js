@@ -12,12 +12,16 @@ const SearchBox = React.createClass({
 
   getInitialState () {
     return {
+      userTyping: false,
       enteredValue: this.props.query.q
     }
   },
 
   componentWillReceiveProps (newProps) {
-    this.setState({ enteredValue: newProps.query.q })
+    // Don't overwrite entered value (with query string value, presumably) if user is acively typing
+    if (!this.state.userTyping) {
+      this.setState({ enteredValue: newProps.query.q })
+    }
   },
 
   propTypes: {
@@ -30,11 +34,16 @@ const SearchBox = React.createClass({
   },
 
   handleKeyUp: function (event) {
+    this.setState({ userTyping: true })
+
     if (this.timeout) clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
       if (this.refs._input) {
         var q = this.refs._input.value
         if (q) this.props.onSubmit({ q: q })
+
+        // User is no longer typing:
+        this.setState({ userTyping: false })
       }
     }, this.props.delayToAutoSearch)
   },

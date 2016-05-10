@@ -1,4 +1,5 @@
 import { constants, queryId } from '../actions/resources'
+import { hashRemoveKeys } from '../utils'
 
 // Utils:
 
@@ -62,14 +63,14 @@ function resourcesQueryReducer (resourcesState, action) {
 function aggregationsReducer (resourcesState, action) {
   var aggregationsQueries = null
 
-  // console.log('resources reduce: ', resourcesState)
   switch (action.type) {
     case constants.FETCH_RESOURCES_AGGREGATIONS:
-      aggregationsQueries = addQuery(resourcesState.queries, { isFetching: true, query: action.query })
+      aggregationsQueries = addQuery(resourcesState.aggregationsQueries, { isFetching: true, query: action.query })
       return Object.assign({}, resourcesState, { aggregationsQueries })
 
     case constants.RECEIVE_RESOURCES_AGGREGATIONS:
-      aggregationsQueries = addQuery(resourcesState.aggregationsQueries, { isFetching: false, query: action.query, aggregations: action.aggregations })
+      var cleanedQuery = hashRemoveKeys(action.query, 'page', 'per_page')
+      aggregationsQueries = addQuery(resourcesState.aggregationsQueries, { isFetching: false, query: cleanedQuery, aggregations: action.aggregations })
       return Object.assign({}, resourcesState, { aggregationsQueries })
 
     default:
@@ -108,7 +109,6 @@ function randomResourceReducer (resourcesState, action) {
         randoms: { isFetching: true }
       })
     case constants.RECEIVE_RANDOM_RESOURCES:
-      console.log('receiving randoms')
       return Object.assign({}, resourcesState, {
         randoms: { isFetching: false, items: action.items }
       })
@@ -138,7 +138,8 @@ export default function resources (state = { queries: {}, aggregationsQueries: {
       return Object.assign({}, state, randomResourceReducer(state, action))
 
     case constants.SET_RESOURCES_QUERY:
-      return Object.assign({}, state, { currentQueryId: queryId(action.query) })
+      var aggQuery = hashRemoveKeys(action.query, 'page', 'per_page')
+      return Object.assign({}, state, { currentQueryId: queryId(action.query), currentAggregationsQueryId: queryId(aggQuery) })
 
     case constants.SET_CURRENT_RESOURCE_ID:
       return Object.assign({}, state, { currentResourceId: action.id, currentResource: state.cached[action.id] ? state.cached[action.id] : { isFetching: true } })

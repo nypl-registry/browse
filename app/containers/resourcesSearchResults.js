@@ -58,18 +58,20 @@ function mapStateToProps (state) {
   const {
     queries,
     aggregationsQueries,
-    currentQueryId
+    currentQueryId,
+    currentAggregationsQueryId
   } = resources || {
     queries: {},
-    aggregationsQueries: [],
-    currentQueryId: null
+    aggregationsQueries: {},
+    currentQueryId: null,
+    currentAggregationsQueryId: null
   }
 
   var query = null
   var aggregationsQuery = null
   if (currentQueryId) {
     query = queries[currentQueryId]
-    aggregationsQuery = aggregationsQueries[currentQueryId]
+    aggregationsQuery = aggregationsQueries[currentAggregationsQueryId]
   }
 
   return {
