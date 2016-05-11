@@ -253,6 +253,9 @@ h3 {
      color: white;
    }
 	}
+	.agents-search-examples-image{
+	    background-size: cover !important;
+	}
 	.agents-search-examples-image:after{
 		padding-top: 100%;
 		display: block;
@@ -597,7 +600,7 @@ h3 {
 }
 
 .search-results-aggregations {
-  
+
   // .sub-menu:
   .full {
     width: 100%;
@@ -623,7 +626,7 @@ h3 {
     }
 
     li {
-      
+
       .nypl-icon-circle-x {
         display: none;
       }
@@ -722,10 +725,10 @@ dl {
 }
 
 @keyframes sk-bouncedelay {
-  0%, 80%, 100% { 
+  0%, 80%, 100% {
     -webkit-transform: scale(0);
     transform: scale(0);
-  } 40% { 
+  } 40% {
     -webkit-transform: scale(1.0);
     transform: scale(1.0);
   }

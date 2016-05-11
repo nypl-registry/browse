@@ -35,9 +35,10 @@ const AgentPage = React.createClass({
         </div>
       )
     } else {
+      console.log(this.props.agent)
       var textMiddleClass = 'agent-hero-middle-text'
       var textLowerClass = 'agent-hero-lower-text'
-      var imageUrl = firstValue(this.props.agent.depiction)
+      var imageUrl = `https://s3.amazonaws.com/data.nypl.org/wikimedia_cache/${firstValue(this.props.agent.depiction)}`
       var textMiddle = firstValue(this.props.agent.prefLabel)
       var desc = joinedValues(this.props.agent.description, ' ')
       var textLower = desc
