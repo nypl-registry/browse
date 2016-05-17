@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { stringify } from 'qs'
 
+import WindowTitleMixin from '../lib/windowTitleMixin'
 import HeaderNav from '../components/shared/headerNav'
 import Footer from '../components/shared/footer.js'
 import SearchResults from '../components/shared/searchResults.js'
@@ -12,6 +13,7 @@ import AgentsSearchResultsItem from '../components/agents/searchResult.js'
 import { setAgentsQuery } from '../actions/agents'
 
 const AgentsSearchResults = React.createClass({
+  mixins: [WindowTitleMixin],
 
   contextTypes: {
     router: React.PropTypes.object.isRequired
@@ -29,6 +31,7 @@ const AgentsSearchResults = React.createClass({
   componentWillReceiveProps (nextProps) {
     const { location: loc } = nextProps
     this.fetch(loc.query)
+    this.setWindowTitle('Agents Search')
   },
 
   search (query) {

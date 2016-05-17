@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 
 import { fetchRandomAgents } from '../actions/agents'
 
+import WindowTitleMixin from '../lib/windowTitleMixin'
 import HeaderNav from '../components/shared/headerNav.js'
 import Hero from '../components/shared/hero.js'
 import SearchBox from '../components/shared/searchBox.js'
@@ -18,8 +19,11 @@ const agentsHeroImages = [
 ]
 
 const Agents = React.createClass({
+  mixins: [WindowTitleMixin],
+
   componentDidMount () {
     this.props.fetchRandoms()
+    this.setWindowTitle('Agents')
   },
 
   contextTypes: {

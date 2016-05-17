@@ -6,12 +6,15 @@ import { firstValue, joinedValues } from '../utils.js'
 
 import { setCurrentAgentId } from '../actions/agents'
 
+import WindowTitleMixin from '../lib/windowTitleMixin'
 import HeaderNav from '../components/shared/headerNav.js'
 import Hero from '../components/shared/hero.js'
 import Footer from '../components/shared/footer.js'
 import AgentPageResources from '../components/agents/agentPageResources.js'
 
 const AgentPage = React.createClass({
+  mixins: [WindowTitleMixin],
+
   componentDidMount () {
     const { params } = this.props
     this.props.setCurrentId(parseInt(params.id))
@@ -20,6 +23,8 @@ const AgentPage = React.createClass({
   componentWillReceiveProps (nextProps) {
     const { params } = nextProps
     this.props.setCurrentId(parseInt(params.id))
+
+    if (nextProps.agent) this.setWindowTitle('Agents', nextProps.agent.prefLabel)
   },
 
   render () {

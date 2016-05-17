@@ -14,13 +14,14 @@ import Hero from '../components/shared/hero'
 import Footer from '../components/shared/footer'
 import OWILinks from '../components/resources/owiLinks'
 import ImageLoadMixin from '../lib/imageLoadMixin'
+import WindowTitleMixin from '../lib/windowTitleMixin'
 import LoadingIndicator from '../components/shared/loadingIndicator'
 
 import { setCurrentResourceId, fetchByOwiIfNeeded } from '../actions/resources'
 
 const ResourcePage = React.createClass({
 
-  mixins: [ImageLoadMixin],
+  mixins: [ImageLoadMixin, WindowTitleMixin],
 
   getDefaultProps (props) {
     // console.log('props: ', props)
@@ -61,6 +62,9 @@ const ResourcePage = React.createClass({
     if (this.item() && this.item().hasIdentifier('owi')) {
       this.props.fetchByOwi(this.item().getIdentifier('owi'))
     }
+
+    if (nextProps.resource) this.setWindowTitle('Resources', nextProps.resource.firstTitle())
+
     this.checkDepiction()
   },
 
@@ -90,7 +94,6 @@ const ResourcePage = React.createClass({
       var id = val.split(':')[2]
       var filterLink = this.renderFilterLink({ identifier: val }, `Find resources for ${val}`)
     */
-    console.log('idents: ', this.item().identifiers())
     this.item().identifiers().forEach((identifier, i) => {
       var id = identifier.id
       var filterLink = this.renderFilterLink({ identifier: `urn:${identifier.type}:${identifier.id}` }, `Find resources for ${identifier.id}`)
@@ -245,7 +248,7 @@ const ResourcePage = React.createClass({
   },
 
   item () {
-    return this.props.resource // cached[this.props.params.id]
+    return this.props.resource
   },
 
   renderHierarchy () {
