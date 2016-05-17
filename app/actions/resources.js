@@ -50,7 +50,9 @@ export function receiveResources (query, items, total, context) {
 function fetchResources (query, context) {
   return (dispatch) => {
     dispatch(requestResources(query, context))
-    return Resource.find(query, (results) => dispatch(receiveResources(query, results.results, results.total, context)))
+    return Resource.find(query, (results) => {
+      dispatch(receiveResources(query, results.results, results.total, context))
+    })
   }
 }
 

@@ -18,7 +18,7 @@ const ResourcesSearchResultsItem = React.createClass({
     var resourcesNoun = (this.props.result.useCount === 1) ? 'resource' : 'resources'
     var resourcesStatement = this.props.result.useCount ? <span>{this.props.result.useCount} {resourcesNoun}</span> : null
 
-    var contributorStatement = (typeof this.props.result.contributor === 'object') ? <ul className='contributor-statement'>{this.props.result.contributor.map((c, ind) => <li key={ind}>{c.label}</li>)}</ul> : ''
+    var contributorStatement = (typeof this.props.result.contributor === 'object') ? <ul className='contributor-statement'>{this.props.result.contributor.map((c, ind) => <li key={ind}>{c.prefLabel}</li>)}</ul> : ''
 
     var desc = <div>{contributorStatement}<br />{resourcesStatement}</div>
 
@@ -29,8 +29,7 @@ const ResourcesSearchResultsItem = React.createClass({
     if (this.props.result.dateEndString) dates.push(this.props.result.dateEndString)
     dates = null // dates.length > 0 ? <span className='resource-title-dates'>{dates.map((d, ind) => <span key={ind}>{d}</span>)}</span> : null
 
-    var termsStatement = <ul className='resource-listing-terms'>{this.props.result.termLabels.slice(0, 3).map((l, ind) => <li key={ind}>{l}</li>)}</ul>
-    // {this.props.result.termLabels.length > 3 && '...'}
+    var termsStatement = <ul className='resource-listing-terms'>{this.props.result.subject ? this.props.result.subject.slice(0, 3).map((subj, ind) => <li key={ind}>{subj.prefLabel}</li>) : null}</ul>
 
     return (
       <Link className='agent-listing-item-link' title={title} to={this.props.result.localUrl} key={this.props.result.id}>

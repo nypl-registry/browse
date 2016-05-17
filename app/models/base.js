@@ -1,6 +1,6 @@
 // var axios = require('axios')
 import fetch from 'isomorphic-fetch'
-import { apiHistoryPush } from '../utils.js'
+import { apiHistoryPush, parseUrn } from '../utils.js'
 
 import qs from 'qs'
 
@@ -10,16 +10,16 @@ class BaseModel {
 
   constructor (props = {}) {
     if (props['@id']) {
-      var rdfType = (typeof props['@id'] === 'object') ? props['@id'][0] : props['@id']
-      this._type = rdfType.split(':')[0]
-      this.id = rdfType.split(':')[1]
+      var urn = (typeof props['@id'] === 'object') ? props['@id'][0] : props['@id']
+      this._type = parseUrn(urn).type
+      this.id = parseUrn(urn).id
     }
 
     ;['uri', 'prefLabel', 'depiction', 'identifier'].forEach((prop) => {
       if (props[prop]) this[prop] = props[prop]
     })
-    var pluralType = this._type + (this._type[this._type.length - 1] !== 's' ? 's' : '')
-    this.localUrl = `/${pluralType}/${this.id}`
+    var prefix = `${this._type}`
+    this.localUrl = `/${prefix}/${this.id}`
   }
 
   static aggregations (path, params, cb) {

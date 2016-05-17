@@ -13,11 +13,8 @@ class Resource extends BaseModel {
     })
 
     this.related = {}
-  }
 
-  contributors () {
-    var contributors = this.contributor && this.contributor.length > 0 ? this.contributor : []
-    return contributors
+    this.contributorsWithRoles = this.parseContributorsWithRoles()
   }
 
   hasRelated (type) {
@@ -39,11 +36,19 @@ class Resource extends BaseModel {
   }
 
   identifiers () {
-    return this.identifier.map((val) => {
+    return Object.keys(this).filter((k) => k.match(/^id[A-Z]/)).map((k) => {
+      var type = k.replace(/^id/, '').toLowerCase()
+      if (type === 'exhib') type = 'exhibition'
+      if (type === 'lcccoarse') type = 'lccc'
+      var id = this[k]
+      return { type, id }
+    })
+
+    /* this.identifier.map((val) => {
       var type = val.split(':')[1]
       var id = val.split(':')[2]
       return { type: type, id: id }
-    })
+    })*/
   }
 
   resourceType () {
@@ -53,7 +58,7 @@ class Resource extends BaseModel {
   }
 
   rdfType () {
-    return this.type[0].replace(/nypl:/, '')
+    return this['@type'][0].replace(/nypl:/, '')
   }
 
   firstTitle () {
@@ -79,6 +84,24 @@ class Resource extends BaseModel {
     if (this.dateStartString) dates.push(this.dateStartString)
     if (this.dateEndString) dates.push(this.dateEndString)
     return dates
+  }
+
+  parseContributorsWithRoles () {
+    var contributors = this.contributor && this.contributor.length > 0 ? this.contributor : []
+    Object.keys(this).forEach((field) => {
+      if (field.match(/roles:\w{3}$/)) {
+        var role = field.match(/roles:(\w{3})/)[1]
+        this[field].forEach((contrib) => {
+          contributors.forEach((_contrib, i) => {
+            if (contrib['@id'] === _contrib['@id']) {
+              if (!contributors[i].roles) contributors[i].roles = []
+              contributors[i].roles.push({ '@id': role, prefLabel: contrib.note })
+            }
+          })
+        })
+      }
+    })
+    return contributors
   }
 
   static fromStatements (props) {

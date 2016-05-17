@@ -7,7 +7,7 @@ require('core-js/fn/object/entries')
 import { stringify } from 'qs'
 import pluralize from 'pluralize'
 
-import { urlFor } from '../utils.js'
+import { urlFor, eachValue } from '../utils.js'
 
 import HeaderNav from '../components/shared/headerNav'
 import Hero from '../components/shared/hero'
@@ -85,16 +85,24 @@ const ResourcePage = React.createClass({
     var external = []
     var other = []
 
-    this.item().identifier.forEach((val, i) => {
+    /* this.item().identifier.forEach((val, i) => {
       var type = val.split(':')[1]
       var id = val.split(':')[2]
       var filterLink = this.renderFilterLink({ identifier: val }, `Find resources for ${val}`)
-      switch (type) {
+    */
+    console.log('idents: ', this.item().identifiers())
+    this.item().identifiers().forEach((identifier, i) => {
+      var id = identifier.id
+      var filterLink = this.renderFilterLink({ identifier: `urn:${identifier.type}:${identifier.id}` }, `Find resources for ${identifier.id}`)
+      switch (identifier.type) {
         case 'bnum':
           if (!this.item().suppressed) external.push(<span key={i}><em>NYPL Catalog</em> <a target='_blank' href={`http://catalog.nypl.org/record=${id}`}>{id}</a> {filterLink}</span>)
           break
         case 'oclc':
-          external.push(<span key={i}><em>Worldcat</em> <a target='_blank' href={`http://worldcat.org/oclc/${id}`}>{id}</a> {filterLink}</span>)
+          eachValue(id, (id) => {
+            filterLink = this.renderFilterLink({ identifier: `urn:${identifier.type}:${id}` }, `Find resources for ${id}`)
+            external.push(<span key={i}><em>Worldcat</em> <a target='_blank' href={`http://worldcat.org/oclc/${id}`}>{id}</a> {filterLink}</span>)
+          })
           break
         case 'lccc':
           external.push(<span key={i}><em>NYPL B.I.L.L.I.</em> <a target='_blank' href={`http://billi.nypl.org/classmark/${id}`}>{id}</a> {filterLink}</span>)
@@ -118,7 +126,7 @@ const ResourcePage = React.createClass({
           break
 
         default:
-          other.push(<span key={i}>{val} {filterLink}</span>)
+          other.push(<span key={i}>{identifier.id} {filterLink}</span>)
       }
     })
 
@@ -137,17 +145,18 @@ const ResourcePage = React.createClass({
 
   renderContributors () {
     var links = []
-    this.item().contributor.forEach((contributor, i) => {
-      var filterLink = this.renderFilterLink({ contributor: contributor['@id'] }, `Find with contributor ${contributor.label}`)
+    this.item().contributorsWithRoles.forEach((contributor, i) => {
+      var filterLink = this.renderFilterLink({ contributor: contributor['@id'] }, `Find with contributor ${contributor.prefLabel}`)
       var roles = null
       if (contributor.roles) {
         roles = (
-          <h4>
-            {contributor.roles.map((role) => <span>{role.label}</span>)}
-          </h4>
+          <em>
+            {contributor.roles.map((role, i) => <span key={i}>{role.prefLabel}</span>)}
+          </em>
         )
       }
-      links.push(<span key={i}>{roles}<Link to={urlFor(contributor)}>{contributor.label}</Link> {filterLink}</span>)
+      var rolesLine = roles ? <span> ({roles})</span> : null
+      links.push(<span key={i}><Link to={urlFor(contributor)}>{contributor.prefLabel}</Link> {filterLink}{rolesLine}</span>)
     })
 
     return this.renderProperty('Contributors', links)
@@ -156,8 +165,8 @@ const ResourcePage = React.createClass({
   renderSubjects () {
     var links = []
     this.item().subject.forEach((subject, i) => {
-      var filterLink = this.renderFilterLink({ subject: subject['@id'] }, `Find resources for ${subject.label}`)
-      links.push(<span key={i}><Link to={urlFor(subject)}>{subject.label}</Link> {filterLink}</span>)
+      var filterLink = this.renderFilterLink({ subject: subject['@id'] }, `Find resources for ${subject.prefLabel}`)
+      links.push(<span key={i}><Link to={urlFor(subject)}>{subject.prefLabel}</Link> {filterLink}</span>)
     })
 
     return this.renderProperty('Subjects', links)
@@ -166,27 +175,27 @@ const ResourcePage = React.createClass({
   renderBaseballCard () {
     var terms = []
 
-    if (this.item().type) {
+    if (this.item()['@type']) {
       terms.push((
         <span key='type'>
           <dt>Type</dt>
-          <dd>{this.item().type} {this.renderFilterLink({ type: this.item().type }, 'Find other resources with this type')}</dd>
+          <dd>{eachValue(this.item()['@type'], (type, i) => <div key={i}>{type} {this.renderFilterLink({ type: type }, 'Find other resources with this type')}</div>)}</dd>
         </span>
       ))
     }
 
-    if (this.item().materialType) {
+    if (this.item().type) {
       terms.push((
         <span key='resourceType'>
           <dt>Material Type</dt>
-          <dd><a href={`http://id.loc.gov/vocabulary/resourceTypes/${this.item().materialType[0].replace('resourcetypes:', '')}`}>{this.item().materialType}</a> {this.renderFilterLink({ materialType: this.item().materialType }, 'Find other resources with this material type')}</dd>
+          <dd>{eachValue(this.item().materialType, (type, i) => <div key={i}><a href={`http://id.loc.gov/vocabulary/resourceTypes/${type.replace('resourcetypes:', '')}`}>{type.prefLabel}</a> {this.renderFilterLink({ materialType: type['@id'] }, 'Find other resources with this type')}</div>)}</dd>
         </span>
       ))
     }
 
     if (this.item().language) {
       var languageLines = this.item().language.map((lang, i) => {
-        return <div key={i}><a href={`http://id.loc.gov/vocabulary/languages/${lang.replace('language:', '')}`}>{lang}</a> {this.renderFilterLink({ language: lang }, 'Find other resources with this language')}</div>
+        return <div key={i}><a href={`http://id.loc.gov/vocabulary/languages/${lang.prefLabel}`}>{lang.prefLabel}</a> {this.renderFilterLink({ language: lang['@id'] }, 'Find other resources with this language')}</div>
       })
       terms.push((
         <span key='language'>
@@ -200,7 +209,7 @@ const ResourcePage = React.createClass({
       terms.push((
         <span key='owner'>
           <dt>Organization</dt>
-          <dd>{this.item().owner} {this.renderFilterLink({ owner: this.item().owner }, 'Find other resources by owner')}</dd>
+          <dd>{this.item().owner.prefLabel} {this.renderFilterLink({ owner: this.item().owner['@id'] }, 'Find other resources by owner')}</dd>
         </span>
       ))
     }
@@ -209,7 +218,7 @@ const ResourcePage = React.createClass({
       terms.push((
         <span key='dates'>
           <dt>Dates</dt>
-          <dd>{this.item().datesStatement()} {this.renderFilterLink(this.item().dateQuery(), 'Find other resources by owner')}</dd>
+          <dd>{this.item().datesStatement()} {this.renderFilterLink(this.item().dateQuery(), 'Find other resources by dates')}</dd>
         </span>
       ))
     }
@@ -241,7 +250,7 @@ const ResourcePage = React.createClass({
 
   renderHierarchy () {
     var parentsTopDown = this.item().parents ? [].concat([], this.item().parents).reverse() : []
-    var parentLinks = parentsTopDown.map((parent, i) => <Link key={i} className={`level-${i}`} to={`/resources/${parent['@id']}`}>{parent.label}</Link>)
+    var parentLinks = parentsTopDown.map((parent, i) => <Link key={i} className={`level-${i}`} to={`/resources/${parent['@id']}`}>{parent.prefLabel}</Link>)
     var selfLink = <span key='self' className={`self level-${parentLinks.length}`}><b>{this.item().firstTitle()}</b></span>
 
     var childLinks = this.item().getRelated('children').map((child, i) => <Link className={`level-${parentLinks.length + 1}`} key={i} to={urlFor(child)}>{child.firstTitle()}</Link>)
@@ -290,7 +299,7 @@ const ResourcePage = React.createClass({
         // if (this.state.hasDepiction) imageUrl = this.item().depiction
 
         if (this.item().subject) {
-          textLower = this.item().subject.slice(0, 5).map((s) => s.label).join(', ')
+          textLower = this.item().subject.slice(0, 5).map((s) => s.prefLabel).join(', ')
           if (this.item().subject.length > 5) textLower += '...'
         }
       }
@@ -303,7 +312,7 @@ const ResourcePage = React.createClass({
         if (this.item().subject && this.item().subject.length > 0) blocks.push(this.renderSubjects())
         if (this.item().contributor && this.item().contributor.length > 0) blocks.push(this.renderContributors())
         if (this.item().note) blocks.push(this.renderProperty('Notes', this.item().note))
-        if (this.item().identifier) blocks.push(this.renderIdentifiers())
+        if (this.item().identifiers()) blocks.push(this.renderIdentifiers())
       }
 
       return (
@@ -343,12 +352,10 @@ function mapStateToProps (state) {
   const { resources } = state
   const {
     cached,
-    currentResourceId // ,
-    // currentResource
+    currentResourceId
   } = resources || {
     cached: {},
-    currentResourceId: null //,
-    // currentResource: null
+    currentResourceId: null
   }
 
   var resource = null
@@ -359,10 +366,6 @@ function mapStateToProps (state) {
     isFetching = cached[currentResourceId].isFetching
     _version = cached[currentResourceId]._version
   }
-  /*
-  var resource = currentResource.item
-  var isFetching = currentResource.isFetching
-  */
 
   return {
     resource,

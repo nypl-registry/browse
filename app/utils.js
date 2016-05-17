@@ -23,6 +23,14 @@ export function hashRemoveKeys (hash) {
   return cleanedHash
 }
 
+export function parseUrn (urn) {
+  var parts = urn.split(':')
+  return {
+    type: parts[0] === 'res' ? 'resources' : parts[0],
+    id: parseInt(parts[1])
+  }
+}
+
 export function deepEqual (a1, a2) {
   // TODO: this should use a proper deep-diff that doesn't produce false positives:
   return JSON.stringify(a1) === JSON.stringify(a2)
@@ -61,8 +69,8 @@ export function urlFor (obj) {
   var type = null
   var id = null
   var matches = null
-  if ((matches = obj['@id'].match(/^(agents|resources|terms):(\d+)/))) {
-    type = matches[1]
+  if ((matches = obj['@id'].match(/^(agents|res|terms):(\d+)/))) {
+    type = matches[1] === 'res' ? 'resources' : matches[1]
     id = parseInt(matches[2])
   }
 

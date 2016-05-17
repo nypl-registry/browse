@@ -1,5 +1,5 @@
 import { constants, queryId } from '../actions/resources'
-import { hashRemoveKeys } from '../utils'
+import { hashRemoveKeys, parseUrn } from '../utils'
 
 // Utils:
 
@@ -43,12 +43,12 @@ function resourcesQueryReducer (resourcesState, action) {
     case constants.RECEIVE_RESOURCES:
       queries = addQuery(resourcesState.queries, { isFetching: false, query: action.query, items: action.items, total: action.total })
       cached = addItemsToCache(resourcesState.cached, action.items)
-
       if (action.context === 'owi') {
         action.items.forEach((item) => assignRelationshipToResource(cached, item.id, 'owi', action.items))
       }
       if (action.context === 'children') {
-        if (action.items.length > 0) assignRelationshipToResource(cached, action.items[0].parentUri, 'children', action.items)
+        // FIXME: currently assumes immediate parent is first in memberOf array. Need to verify that:
+        if (action.items.length > 0) assignRelationshipToResource(cached, parseUrn(action.items[0].memberOf[0]['@id']).id, 'children', action.items)
       }
 
       return Object.assign({}, resourcesState, { queries: queries, cached: cached })
