@@ -4,7 +4,9 @@ import { apiHistoryPush, parseUrn } from '../utils.js'
 
 import qs from 'qs'
 
-const API_URL = window.browseAPI
+// FIXME
+const API_URL = 'http://localhost:3000/api/v1'
+// const API_URL = window.browseAPI
 
 class BaseModel {
 

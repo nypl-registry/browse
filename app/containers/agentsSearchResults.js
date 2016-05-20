@@ -67,11 +67,9 @@ function mapStateToProps (state) {
 
   var query = null
   var aggregationsQuery = null
-  if (currentQueryId) {
+  if ((typeof currentQueryId) !== 'undefined') {
     query = queries[currentQueryId]
     aggregationsQuery = aggregationsQueries[currentQueryId]
-    console.log('retreiving query: ', query)
-    console.log('agg query: ', aggregationsQuery)
   }
 
   return {

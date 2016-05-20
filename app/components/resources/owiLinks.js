@@ -3,7 +3,6 @@ import { Link } from 'react-router'
 
 const OWILinks = React.createClass({
   render () {
-    // var id = this.props.id
     var related = this.props.item.getRelated('owi').map((item) => {
       var url = `/resources/${item.id}`
       if (item.dateStart && item.title) {
@@ -14,7 +13,7 @@ const OWILinks = React.createClass({
     })
 
     return (
-      <div className='resource-owi-box'>
+      <div className='resource-owi-box' key='owi-links'>
         <ul>
           <lh><b>Related Editions</b></lh>
           {related.map((el, i) => <li key={i}>{el}</li>)}

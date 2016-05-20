@@ -101,7 +101,7 @@ const ResourcePage = React.createClass({
         case 'oclc':
           eachValue(id, (id) => {
             filterLink = this.renderFilterLink({ identifier: `urn:${identifier.type}:${id}` }, `Find resources for ${id}`)
-            external.push(<span key={i}><em>Worldcat</em> <a target='_blank' href={`http://worldcat.org/oclc/${id}`}>{id}</a> {filterLink}</span>)
+            external.push(<span key={`${i}.${id}`}><em>Worldcat</em> <a target='_blank' href={`http://worldcat.org/oclc/${id}`}>{id}</a> {filterLink}</span>)
           })
           break
         case 'lccc':
@@ -109,7 +109,7 @@ const ResourcePage = React.createClass({
           break
         case 'owi':
           external.push(<span key={i}><em>OCLC Classification</em> <a target='_blank' href={`http://classify.oclc.org/classify2/ClassifyDemo?owi=${id}`}>{id}</a> {filterLink}</span>)
-          if (this.item() && this.item().hasRelated('owi')) external.push(<OWILinks item={this.item()} />)
+          if (this.item() && this.item().hasRelated('owi')) external.push(<OWILinks key='owi-links' item={this.item()} />)
           break
         case 'msscoll':
           external.push(<span key={i}><em>NYPL Archival Collection</em> <a target='_blank' href={`http://archives.nypl.org/${id}`}>{id}</a> {filterLink}</span>)
@@ -249,7 +249,7 @@ const ResourcePage = React.createClass({
   },
 
   renderHierarchy () {
-    var parentsTopDown = this.item().parents ? [].concat([], this.item().parents).reverse() : []
+    var parentsTopDown = this.item().memberOf ? [].concat([], this.item().memberOf).reverse() : []
     var parentLinks = parentsTopDown.map((parent, i) => <Link key={i} className={`level-${i}`} to={`/resources/${parent['@id']}`}>{parent.prefLabel}</Link>)
     var selfLink = <span key='self' className={`self level-${parentLinks.length}`}><b>{this.item().firstTitle()}</b></span>
 
@@ -308,7 +308,7 @@ const ResourcePage = React.createClass({
       if (this.item()) {
         if (this.item().description) blocks.push(<div className='resource-description' key='description'>{this.item().description}</div>)
         if (this.item().owner || this.item().type) blocks.push(this.renderBaseballCard())
-        if ((this.item().parents && this.item().parents.length > 0) || (this.item().hasRelated('children'))) blocks.push(this.renderHierarchy())
+        if ((this.item().memberOf && this.item().memberOf.length > 0) || (this.item().hasRelated('children'))) blocks.push(this.renderHierarchy())
         if (this.item().subject && this.item().subject.length > 0) blocks.push(this.renderSubjects())
         if (this.item().contributor && this.item().contributor.length > 0) blocks.push(this.renderContributors())
         if (this.item().note) blocks.push(this.renderProperty('Notes', this.item().note))

@@ -5,23 +5,25 @@
   "main": "server.js",
   "dependencies": {
     "axios": "0.9.1",
+    "babel-register": "6.9.0",
+    "body-parser": "1.15.1",
     "core-js": "2.1.3",
     "css-color-names": "0.0.3",
+    "es6-promise": "3.1.2",
     "history": "1.17.0",
+    "isomorphic-fetch": "2.2.1",
     "normalize-css": "2.3.1",
+    "nypl-registry-utils-lexicon": "nypl-registry/utils-lexicon",
+    "pluralize": "1.2.1",
+    "qs": "6.1.0",
     "react": "0.14.3",
     "react-dom": "0.14.3",
     "react-redux": "4.1.1",
     "react-router": "2.0.1",
     "react-router-redux": "4.0.0",
     "redux": "3.1.2",
-    "redux-thunk": "2.0.1",
     "redux-logger": "2.0.4",
-    "isomorphic-fetch": "2.2.1",
-    "qs": "6.1.0",
-    "es6-promise": "3.1.2",
-    "pluralize": "1.2.1",
-    "nypl-registry-utils-lexicon": "nypl-registry/utils-lexicon"
+    "redux-thunk": "2.0.1"
   },
   "devDependencies": {
     "babel-core": "6.3.15",
@@ -44,8 +46,7 @@
     "node-sass": "3.4.2",
     "nodemon": "1.8.1",
     "react-transform-catch-errors": "1.0.0",
-    "react-transform-hmr": "1.0.4",
-    "redbox-react": "1.0.1",
+    "redbox-react": "1.2.5",
     "redux-devtools": "3.0.2",
     "rimraf": "2.4.3",
     "sass-loader": "3.1.2",
@@ -61,7 +62,7 @@
     "clean": "rimraf dist && mkdir dist && cp prod_index.html dist/index.html",
     "olddeploy": "npm run build && git-directory-deploy --directory dist/ --branch gh-pages",
     "lint": "eslint app",
-    "start": "NODE_ENV=development nodemon server.js --ignore 'app'"
+    "start": "NODE_ENV=development nodemon serverside.js --ignore 'app'"
   },
   "repository": {
     "type": "git",
